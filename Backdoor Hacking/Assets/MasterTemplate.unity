@@ -201,26 +201,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 328606596545295562, guid: 85a2c623b85c45f4fbcbd5bedc7a4b15,
-        type: 2}
-      propertyPath: m_DirectAudioMutes.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 328606596545295562, guid: 85a2c623b85c45f4fbcbd5bedc7a4b15,
-        type: 2}
-      propertyPath: m_TargetAudioSources.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 328606596545295562, guid: 85a2c623b85c45f4fbcbd5bedc7a4b15,
-        type: 2}
-      propertyPath: m_DirectAudioVolumes.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 328606596545295562, guid: 85a2c623b85c45f4fbcbd5bedc7a4b15,
-        type: 2}
-      propertyPath: m_EnabledAudioTracks.Array.size
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4257340207950476, guid: 85a2c623b85c45f4fbcbd5bedc7a4b15, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -258,31 +238,6 @@ Prefab:
       propertyPath: Main
       value: 
       objectReference: {fileID: 242472223}
-    - target: {fileID: 1413571536263196, guid: 85a2c623b85c45f4fbcbd5bedc7a4b15, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 328606596545295562, guid: 85a2c623b85c45f4fbcbd5bedc7a4b15,
-        type: 2}
-      propertyPath: m_VideoClip
-      value: 
-      objectReference: {fileID: 32900000, guid: ed752f84668bcaa4f912de1a1e015252,
-        type: 3}
-    - target: {fileID: 328606596545295562, guid: 85a2c623b85c45f4fbcbd5bedc7a4b15,
-        type: 2}
-      propertyPath: m_DirectAudioVolumes.Array.data[0]
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 328606596545295562, guid: 85a2c623b85c45f4fbcbd5bedc7a4b15,
-        type: 2}
-      propertyPath: m_EnabledAudioTracks.Array.data[0]
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 328606596545295562, guid: 85a2c623b85c45f4fbcbd5bedc7a4b15,
-        type: 2}
-      propertyPath: m_ControlledAudioTrackCount
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 85a2c623b85c45f4fbcbd5bedc7a4b15, type: 2}
   m_IsPrefabParent: 0

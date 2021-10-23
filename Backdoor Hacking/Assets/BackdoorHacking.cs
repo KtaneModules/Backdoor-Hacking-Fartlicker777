@@ -47,7 +47,7 @@ public class BackdoorHacking : MonoBehaviour {
 
    IEnumerator IBeViewingTheseBitches () {
       Animation.gameObject.SetActive(true);
-      //Audio.PlaySoundAtTransform("GettingGotAudio", Cube.transform);
+      Audio.PlaySoundAtTransform("GettingGotAudio", Cube.transform);
       //Background.clip = VideoLoader.clips[0];
       Debug.Log("A");
       //Main.gameObject.SetActive(false);

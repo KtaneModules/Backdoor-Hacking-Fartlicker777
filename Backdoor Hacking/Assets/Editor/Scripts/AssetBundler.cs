@@ -432,12 +432,16 @@ public class AssetBundler
             target);
 #pragma warning restore 618
 
-        //We are only interested in the BUNDLE_FILENAME bundle (and not the extra AssetBundle or the manifest files
-        //that Unity makes), so just copy that to the final output folder
-        string srcPath = Path.Combine(TEMP_BUILD_FOLDER, BUNDLE_FILENAME);
-        string destPath = Path.Combine(outputFolder, BUNDLE_FILENAME);
-        File.Copy(srcPath, destPath, true);
-    }
+      //We are only interested in the BUNDLE_FILENAME bundle (and not the extra AssetBundle or the manifest files
+      //that Unity makes), so just copy that to the final output folder
+      string srcPath = Path.Combine(TEMP_BUILD_FOLDER, BUNDLE_FILENAME);
+      string destPath = Path.Combine(outputFolder, BUNDLE_FILENAME);
+      File.Copy(srcPath, destPath, true);
+
+      srcPath = Path.Combine(TEMP_BUILD_FOLDER, "backdoorhackingvideo.bundle");
+      destPath = Path.Combine(outputFolder, "backdoorhackingvideo.bundle");
+      File.Copy(srcPath, destPath, true);
+   }
 
     /// <summary>
     /// Creates a modInfo.json file and puts it in the OUTPUT_FOLDER.
