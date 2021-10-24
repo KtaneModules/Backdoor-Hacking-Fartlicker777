@@ -2168,7 +2168,7 @@ TextMesh:
   m_TabSize: 4
   m_FontSize: 144
   m_FontStyle: 0
-  m_RichText: 0
+  m_RichText: 1
   m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
   m_Color:
     serializedVersion: 2
@@ -2617,6 +2617,12 @@ MonoBehaviour:
   Cube: {fileID: 1355900227346540}
   Button: {fileID: 114695500868990006}
   Background: {fileID: 328606596545295562}
+  ZoneText:
+  - {fileID: 102967239743480550}
+  - {fileID: 102512095594923220}
+  - {fileID: 102842525710710780}
+  - {fileID: 102261286105475292}
+  - {fileID: 102999496316983026}
 --- !u!114 &114853960920223876
 MonoBehaviour:
   m_ObjectHideFlags: 1

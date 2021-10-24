@@ -53,7 +53,7 @@ public class BackdoorHacking : MonoBehaviour {
 
    IEnumerator IBeViewingTheseBitches () {
       //Stops an error
-      Main.GetComponent<AudioListener>().enabled = false;
+      //Main.GetComponent<AudioListener>().enabled = false;
       //Switches camera
       MiniCams[0].gameObject.SetActive(true);
 
@@ -123,7 +123,7 @@ public class BackdoorHacking : MonoBehaviour {
                   }
                   Debug.Log("what");
                   ZoneClickIndex++;
-                  yield return new WaitForSeconds(.01f);
+                  yield return new WaitForSecondsRealtime(.01f);
                }
                else {   //Prevents infinite loop in case of fuckup
                   yield return null;
@@ -136,7 +136,7 @@ public class BackdoorHacking : MonoBehaviour {
                   int temp = ZoneText[i].text.LastIndexOf("|");
                   ZoneText[i].text = ZoneText[i].text.Remove(temp, 1).Insert(temp, ".");
                   ZoneClickIndex--;
-                  yield return new WaitForSeconds(.01f);
+                  yield return new WaitForSecondsRealtime(.01f);
                }
                else {   //Prevents infinite loop in case of fuckup
                   yield return null;
