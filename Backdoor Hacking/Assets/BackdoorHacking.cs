@@ -52,8 +52,10 @@ public class BackdoorHacking : MonoBehaviour {
    }
 
    IEnumerator IBeViewingTheseBitches () {
-      //Stops an error
-      //Main.GetComponent<AudioListener>().enabled = false;
+      //Makes it so it does not spam editor. This should not be ingame.
+      if (Application.isEditor) {
+         Main.GetComponent<AudioListener>().enabled = false;
+      }
       //Switches camera
       MiniCams[0].gameObject.SetActive(true);
 
