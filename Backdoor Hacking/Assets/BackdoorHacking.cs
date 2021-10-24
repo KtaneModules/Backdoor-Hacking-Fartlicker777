@@ -31,6 +31,18 @@ public class BackdoorHacking : MonoBehaviour {
    int ModuleId;
    private bool ModuleSolved;
 
+   private KeyCode[] TheKeys =
+  {
+        KeyCode.Backspace, KeyCode.Return,
+        KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, KeyCode.T, KeyCode.Y, KeyCode.U, KeyCode.I, KeyCode.O, KeyCode.P,
+        KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F, KeyCode.G, KeyCode.H, KeyCode.J, KeyCode.K, KeyCode.L,
+        KeyCode.Z, KeyCode.X, KeyCode.C, KeyCode.V, KeyCode.B, KeyCode.N, KeyCode.M,
+        KeyCode.Space
+  };
+
+   string TheLetters = "<Eqwertyuiopasdfghjklzxcvbnm ";
+
+
    void Awake () {
       ModuleId = ModuleIdCounter++;
       /*
@@ -119,17 +131,25 @@ public class BackdoorHacking : MonoBehaviour {
                   ZoneText[i].text = ZoneText[i].text.Substring(0, j) + "|" + ZoneText[i].text.Substring(j + 1);
 
                   for (int k = 0; k < j; k++) {
+                     if (ZoneText[i].text[k] == '.' ) {
+                        ZoneText[i].text = ZoneText[i].text.Substring(0, k) + "⃓" + ZoneText[i].text.Substring(k + 1);
+                     }
+                  }
+
+                  for (int k = 0; k < j; k++) {
                      if (ZoneText[i].text[k] == '|') {
+                        ZoneText[i].text = ZoneText[i].text.Substring(0, k) + "⃓" + ZoneText[i].text.Substring(k + 1);
+                     }
+                  }
+
+                  for (int k = 0; k < j; k++) {
+                     if (ZoneText[i].text[k] == '⃓') {
                         ZoneText[i].text = ZoneText[i].text.Substring(0, k) + "." + ZoneText[i].text.Substring(k + 1);
                      }
                   }
-                  Debug.Log("what");
+                  //Debug.Log("what");
                   ZoneClickIndex++;
-                  yield return new WaitForSecondsRealtime(.01f);
-               }
-               else {   //Prevents infinite loop in case of fuckup
-                  yield return null;
-                  continue;
+                  yield return new WaitForSecondsRealtime(.015f);
                }
             }
             for (int j = ZoneText[i].text.Length - 2; j > 0; j--) {
@@ -138,20 +158,28 @@ public class BackdoorHacking : MonoBehaviour {
                   int temp = ZoneText[i].text.LastIndexOf("|");
                   ZoneText[i].text = ZoneText[i].text.Remove(temp, 1).Insert(temp, ".");
                   ZoneClickIndex--;
-                  yield return new WaitForSecondsRealtime(.01f);
-               }
-               else {   //Prevents infinite loop in case of fuckup
-                  yield return null;
-                  continue;
+                  yield return new WaitForSecondsRealtime(.015f);
                }
             }
          }
       }
    }
 
-   void Update () {
-
-   }
+   /*void Update () {
+      for (int i = 0; i < TheKeys.Count(); i++) {
+         if (Input.GetKeyDown(TheKeys[i])) {
+            if (TheLetters[i].ToString() == "<".ToString()) {
+               
+            }
+            else if (TheLetters[i].ToString() == "E".ToString()) {
+               
+            }
+            else {
+               
+            }
+         }
+      }
+   }*/
 
 #pragma warning disable 414
    private readonly string TwitchHelpMessage = @"Use !{0} to do something.";
