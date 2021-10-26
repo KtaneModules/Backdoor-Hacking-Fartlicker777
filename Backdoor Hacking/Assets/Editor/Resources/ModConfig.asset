@@ -14,19 +14,11 @@ MonoBehaviour:
   id: BackdoorHacking
   title: Backdoor Hacking
   author: 
-  description: 'Flavor text goes here.
-
-
-    Solving description goes here.
-
-
-    Addition credits can go here.
-
-
-    Manual can be found at ktane.timwi.de or in the manuals folder of your game.
-
-
-    If there are any bugs, contact Fartlicker777#9169 on Discord.'
+  description: "B\u0119d\u0119 si\u0119 za ciebie modli\u0142.\r\n\nBlock the hacks
+    that will control the game periodically.\n\nSpecial thanks to Samfundev for some
+    small assistance with videos.\n\nBased off Welcome to the Game II. Also Happy
+    Halloween everyone!\n\nManual can be found at ktane.timwi.de or in the manuals
+    folder of your game.\n\nIf there are any bugs, contact Fartlicker777#9169 on Discord."
   version: 
   outputFolder: build
-  previewImage: {fileID: 0}
+  previewImage: {fileID: 2800000, guid: 05531da2c83ab654b9d070269e308dfb, type: 3}

@@ -159,6 +159,8 @@ public class BackdoorHacking : MonoBehaviour {
    }//-139.157 -139.725
 
    void Start () {
+      DOSCoinAmount = 0;
+      BeingHacked = false;
       DOSCointGoal = 30 + Bomb.GetSolvableModuleNames().Count() * 15;
       Debug.LogFormat("[Backdoor Hacking #{0}] Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz", ModuleId);
       StartCoroutine(Timer());
@@ -167,6 +169,7 @@ public class BackdoorHacking : MonoBehaviour {
    #region Buttons
 
    void Buy (KMSelectable Button) {
+      Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Button.transform);
       for (int i = 0; i < 3; i++) {
          if (Button == BuyButtons[0]) {
             if (DOSCoinAmount >= 100 && Multiplier) {
@@ -191,6 +194,8 @@ public class BackdoorHacking : MonoBehaviour {
    }
 
    void ButtonPress () {
+      Button.AddInteractionPunch();
+      Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Button.transform);
       if (Waiting) {
          return;
       }
