@@ -36,6 +36,8 @@ public class BackdoorHacking : MonoBehaviour {
    public Material[] BarColors;
    public TextMesh ConnectionText;
 
+   static bool BeingHacked;
+
    enum HackState {
       Idle,
       GettingHacked,
@@ -92,6 +94,42 @@ public class BackdoorHacking : MonoBehaviour {
    int CurrentNode = 0;
    int[] Spots = new int[25];
 
+   //Stack Pusher Shit
+   public SpriteRenderer[] StackNodes;
+   public Sprite[] StackPictures;
+   enum StackNodeStates {
+      Empty,
+      EmptyH,
+      Goal,
+      GoalH,
+      You,
+      YouH,
+      Stack,
+      StackH
+   }
+   StackNodeStates[] StackGrid =
+   {
+      StackNodeStates.Empty, StackNodeStates.Empty, StackNodeStates.Empty, StackNodeStates.Empty, StackNodeStates.Empty,
+      StackNodeStates.Empty, StackNodeStates.Empty, StackNodeStates.Empty, StackNodeStates.Empty, StackNodeStates.Empty,
+      StackNodeStates.Empty, StackNodeStates.Empty, StackNodeStates.Goal, StackNodeStates.Empty, StackNodeStates.Empty,
+      StackNodeStates.Empty, StackNodeStates.Empty, StackNodeStates.Empty, StackNodeStates.Empty, StackNodeStates.Empty,
+      StackNodeStates.Empty, StackNodeStates.Empty, StackNodeStates.Empty, StackNodeStates.Empty, StackNodeStates.Empty
+   };
+   int[] OpenStackSpots = new int[24];
+   int StackYou;
+   int ActualSelection;
+   public GameObject StackPusherThing;
+   bool IsMovingYou;
+   bool CanMoveStacks;
+   enum TypesOfItems {
+      Empty,
+      Move,
+      Stack
+   }
+   TypesOfItems HeldItem;
+   int IndexOfHeldStack = -1;
+   int NodesDunked;
+
    static int ModuleIdCounter = 1;
    int ModuleId;
    private bool ModuleSolved;
@@ -114,7 +152,7 @@ public class BackdoorHacking : MonoBehaviour {
       ModuleId = ModuleIdCounter++;
 
       foreach (KMSelectable Button in BuyButtons) {
-          Button.OnInteract += delegate () { Buy(Button); return false; };
+         Button.OnInteract += delegate () { Buy(Button); return false; };
       }
 
       Button.OnInteract += delegate () { ButtonPress(); return false; };
@@ -126,11 +164,7 @@ public class BackdoorHacking : MonoBehaviour {
       StartCoroutine(Timer());
    }
 
-   IEnumerator Timer () {
-      int time = Rnd.Range(60, 151);
-      yield return new WaitForSeconds(time);
-      CallHack();
-   }
+   #region Buttons
 
    void Buy (KMSelectable Button) {
       for (int i = 0; i < 3; i++) {
@@ -156,11 +190,6 @@ public class BackdoorHacking : MonoBehaviour {
       }
    }
 
-   void CallHack () {
-      StopAllCoroutines();
-      StartCoroutine(IBeViewingTheseBitches());
-   }
-
    void ButtonPress () {
       if (Waiting) {
          return;
@@ -168,7 +197,7 @@ public class BackdoorHacking : MonoBehaviour {
       //StartCoroutine(HackResult());
       //StartCoroutine(IBeViewingTheseBitches());
       if (!Connected) {
-         if (Rnd.Range(0, 1) == 0) {
+         if (Rnd.Range(0, 5) == 0) {
             CallHack();
          }
          else {
@@ -185,6 +214,22 @@ public class BackdoorHacking : MonoBehaviour {
       else {
          ConnectionText.text = "Connect";
       }
+   }
+
+   #endregion
+
+   #region General Animations
+
+   IEnumerator Timer () {
+      int time = Rnd.Range(60, 151);
+      yield return new WaitForSeconds(time);
+      CallHack();
+   }
+
+   void CallHack () {
+      StopAllCoroutines();
+      Bar.GetComponent<MeshRenderer>().material = BarColors[2];
+      StartCoroutine(IBeViewingTheseBitches());
    }
 
    IEnumerator Wait () {
@@ -214,7 +259,7 @@ public class BackdoorHacking : MonoBehaviour {
       Audio.PlaySoundAtTransform("ResultsSound", Cube[3].transform);
       HackResultText.text = BlockedHack ? "Hack Blocked" : "Hacked";
       double doubletemp = 0;
-      
+
       if (HackResultText.text == "Hacked") {
          doubletemp = Rnd.Range(20f, 30f);
          doubletemp -= doubletemp % .001;
@@ -365,9 +410,18 @@ public class BackdoorHacking : MonoBehaviour {
       ResetZoneWallInfo();
       ResetMemoryInfo();
       ResetNodeInfo();
+      StackReset();
    }
 
    IEnumerator IBeViewingTheseBitches () {
+      if (BeingHacked) {
+         StopAllCoroutines();
+         Bar.GetComponent<MeshRenderer>().material = BarColors[2];
+         StartCoroutine(Timer());
+      }
+      else {
+         BeingHacked = true;
+      }
       CurrentState = HackState.GettingHacked;
       //Makes it so it does not spam editor. This should not be ingame.
       if (Application.isEditor) {
@@ -389,9 +443,10 @@ public class BackdoorHacking : MonoBehaviour {
 
       //Switches to Zonewall cam
       MiniCams[1].gameObject.SetActive(true);
-      CurrentState = HackState.ZoneWall;
       StartCoroutine(ZoneWall());
    }
+
+   #endregion
 
    #region Zonewalling
 
@@ -426,6 +481,7 @@ public class BackdoorHacking : MonoBehaviour {
    }
 
    IEnumerator ZoneWallCursorIndex () {
+      CurrentState = HackState.ZoneWall;
       for (int i = 0; i < 5; i++) {
          while (ZoneClicks != i) {
             for (int j = 1; j < ZoneText[i].text.Length - 1; j++) {
@@ -494,15 +550,28 @@ public class BackdoorHacking : MonoBehaviour {
       }
       //Debug.Log(ZoneCorrectClicks);
       //StartCoroutine(MemoryFraggerDisplay());
+      
       if (ZoneCorrectClicks == 5) {
          StartCoroutine(Instablock());
       }
       else {
-         if (Rnd.Range(0, 2) == 0) {
-            StartCoroutine(MemoryFraggerDisplay());
-         }
-         else {
-            NodeMazeGeneration();
+         switch (Rnd.Range(0, 10)) {
+            case 0:
+            case 1:
+            case 2:
+               NodeMazeGeneration();
+               break;
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+               StartCoroutine(MemoryFraggerDisplay());
+               break;
+            case 7:
+            case 8:
+            case 9:
+               GenerateStackPusher();
+               break;
          }
       }
    }
@@ -687,7 +756,7 @@ public class BackdoorHacking : MonoBehaviour {
 
    void NodeMazeGeneration () {
       OorD[0] = Rnd.Range(0, 2) == 0;
-      
+
       for (int i = 1; i < 25; i++) {
          OorD[i] = !OorD[i - 1];
          Spots[i] = i;
@@ -772,6 +841,58 @@ public class BackdoorHacking : MonoBehaviour {
          Highlights[i].SetActive(false);
       }
       Path.Clear();
+   }
+
+   #endregion
+
+   #region Stack Pusher
+
+   void GenerateStackPusher () {// -138.28 1 -133.348
+
+      for (int i = 0; i < MiniCams.Length; i++) {
+         MiniCams[i].gameObject.SetActive(false);
+      }
+      MiniCams[5].gameObject.SetActive(true);
+      for (int i = 0; i < 25; i++) {
+         switch (i) {
+            case 12:
+               StackNodes[i].sprite = StackPictures[2];
+               break;
+            default:
+               StackNodes[i].sprite = StackPictures[0];
+               break;
+         }
+      }
+      for (int i = 0; i < 12; i++) {
+         OpenStackSpots[i] = i;
+      }
+      for (int i = 12; i < 24; i++) {
+         OpenStackSpots[i] = i + 1;
+      }
+      OpenStackSpots.Shuffle();
+      StackYou = OpenStackSpots[0];
+      StackNodes[OpenStackSpots[0]].sprite = StackPictures[5];
+      StackGrid[OpenStackSpots[0]] = StackNodeStates.YouH;
+      ActualSelection = StackYou;
+      for (int i = 1; i < (5 - ZoneCorrectClicks) + 1; i++) {
+         StackGrid[OpenStackSpots[i]] = StackNodeStates.Stack;
+         StackNodes[OpenStackSpots[i]].sprite = StackPictures[6];
+      }
+      StartCoroutine(StackPusher());
+   }
+
+   IEnumerator StackPusher () {  //Reused code but transparency is a fuck.
+      StackPusherThing.transform.localPosition = new Vector3(0, 0, .5f);
+      for (int i = 0; i < 5; i++) {
+         StackPusherThing.transform.localPosition -= new Vector3(0, 0, 0.1f);
+         yield return new WaitForSeconds(.01f);
+      }
+      CurrentState = HackState.StackPusher;
+   }
+
+   void StackReset () {
+      HeldItem = TypesOfItems.Empty;
+      NodesDunked = 0;
    }
 
    #endregion
@@ -927,17 +1048,167 @@ public class BackdoorHacking : MonoBehaviour {
             }
          }
       }
+      else if (CurrentState == HackState.StackPusher) {
+         if (Input.GetKeyDown(KeyCode.W) && ActualSelection > 4) {
+            StackGrid[ActualSelection]--;
+            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
+            ActualSelection -= 5;
+            StackGrid[ActualSelection]++;
+            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
+         }
+         else if (Input.GetKeyDown(KeyCode.A) && ActualSelection % 5 != 0) {
+            StackGrid[ActualSelection]--;
+            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
+            ActualSelection--;
+            StackGrid[ActualSelection]++;
+            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
+         }
+         else if (Input.GetKeyDown(KeyCode.S) && ActualSelection < 20) {
+            StackGrid[ActualSelection]--;
+            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
+            ActualSelection += 5;
+            StackGrid[ActualSelection]++;
+            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
+         }
+         else if (Input.GetKeyDown(KeyCode.D) && ActualSelection % 5 != 4) {
+            StackGrid[ActualSelection]--;
+            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
+            ActualSelection++;
+            StackGrid[ActualSelection]++;
+            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
+         }
+         else if (Input.GetKeyDown(KeyCode.Space)) {
+            if (StackGrid[ActualSelection] == StackNodeStates.YouH) {
+               if (HeldItem == TypesOfItems.Stack) {
+                  StartCoroutine(HackResult());
+               }
+               else {
+                  Audio.PlaySoundAtTransform("MovePickUp", Cube[5].transform);
+                  HeldItem = HeldItem == TypesOfItems.Move ? TypesOfItems.Empty : TypesOfItems.Move;
+                  if (HeldItem == TypesOfItems.Move) {
+                     IndexOfHeldStack = ActualSelection;
+                  }
+               }
+            }
+            else if (StackGrid[ActualSelection] == StackNodeStates.StackH) {
+               int YouPosition = 0;
+               bool CanPickUp = false;
+               for (int i = 0; i < 25; i++) {
+                  if (StackGrid[i] == StackNodeStates.YouH || StackGrid[i] == StackNodeStates.You) {
+                     YouPosition = i;
+                  }
+               }
+               if (ActualSelection == 0) {
+                  if (YouPosition == 1 || YouPosition == 5 || YouPosition == 6) {
+                     CanPickUp = true;
+                  }
+               }
+               else if (ActualSelection == 4) {
+                  if (YouPosition == 3 || YouPosition == 8 || YouPosition == 9) {
+                     CanPickUp = true;
+                  }
+               }
+               else if (ActualSelection == 20) {
+                  if (YouPosition == 15 || YouPosition == 16 || YouPosition == 21) {
+                     CanPickUp = true;
+                  }
+               }
+               else if (ActualSelection == 24) {
+                  if (YouPosition == 18 || YouPosition == 19|| YouPosition == 23) {
+                     CanPickUp = true;
+                  }
+               }
+               else if (ActualSelection > 19) {
+                  if (YouPosition == ActualSelection - 6 || YouPosition == ActualSelection - 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1) {
+                     CanPickUp = true;
+                  }
+               }
+               else if (ActualSelection < 5) {
+                  if (YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 6) {
+                     CanPickUp = true;
+                  }
+               }
+               else if (ActualSelection % 5 == 0) {
+                  if (YouPosition == ActualSelection - 5 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 6) {
+                     CanPickUp = true;
+                  }
+               }
+               else if (ActualSelection % 5 == 4) {
+                  if (YouPosition == ActualSelection - 5 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection - 6) {
+                     CanPickUp = true;
+                  }
+               }
+               else if (YouPosition == ActualSelection - 6 || YouPosition == ActualSelection - 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 6) {
+                  CanPickUp = true;
+               }
+
+               if (HeldItem != TypesOfItems.Empty || !CanPickUp) {
+                  StartCoroutine(HackResult());
+               }
+               else {
+                  Audio.PlaySoundAtTransform("StackPickUp", Cube[5].transform);
+                  HeldItem = TypesOfItems.Stack;
+                  IndexOfHeldStack = ActualSelection;
+               }
+            }
+            else if (StackGrid[ActualSelection] == StackNodeStates.EmptyH) {
+               if (HeldItem == TypesOfItems.Stack) {
+                  Audio.PlaySoundAtTransform("StackPlace", Cube[5].transform);
+                  StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
+                  StackNodes[ActualSelection].sprite = StackPictures[7];
+                  StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;
+                  StackGrid[ActualSelection] = StackNodeStates.StackH;
+                  IndexOfHeldStack = -1;
+                  HeldItem = TypesOfItems.Empty;
+               }
+               else if (HeldItem == TypesOfItems.Move) {
+                  Audio.PlaySoundAtTransform("MovePlace", Cube[5].transform);
+                  StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
+                  StackNodes[ActualSelection].sprite = StackPictures[5];
+                  StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;
+                  StackGrid[ActualSelection] = StackNodeStates.YouH;
+                  IndexOfHeldStack = -1;
+                  HeldItem = TypesOfItems.Empty;
+               }
+            }
+            else if (StackGrid[ActualSelection] == StackNodeStates.GoalH) {
+               if (HeldItem != TypesOfItems.Stack) {
+                  StartCoroutine(HackResult());
+               }
+               else {
+                  Audio.PlaySoundAtTransform("Goal", Cube[5].transform);
+                  HeldItem = TypesOfItems.Empty;
+                  StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
+                  StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;
+                  IndexOfHeldStack = -1;
+                  NodesDunked++;
+                  //Debug.Log(NodesDunked);
+                  //Debug.Log(ZoneCorrectClicks);
+                  if (NodesDunked == 5 - ZoneCorrectClicks) {
+                     BlockedHack = true;
+                     StartCoroutine(HackResult());
+                  }
+               }
+            }
+         }
+      }
    }
 
+   #region Twitch Plays
+
+   /* 
 #pragma warning disable 414
    private readonly string TwitchHelpMessage = @"Use !{0} to do something.";
 #pragma warning restore 414
 
    IEnumerator ProcessTwitchCommand (string Command) {
+      
       yield return null;
    }
 
    IEnumerator TwitchHandleForcedSolve () {
       yield return null;
    }
+   */
+   #endregion
 }
