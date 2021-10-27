@@ -121,8 +121,6 @@ public class BackdoorHacking : MonoBehaviour {
    int StackYou;
    int ActualSelection;
    public GameObject StackPusherThing;
-   bool IsMovingYou;
-   bool CanMoveStacks;
    enum TypesOfItems {
       Empty,
       Move,
@@ -270,6 +268,7 @@ public class BackdoorHacking : MonoBehaviour {
       CurrentState = HackState.GettingHacked;
       Audio.PlaySoundAtTransform("ResultsSound", Cube[3].transform);
       HackResultText.text = BlockedHack ? "Hack Blocked" : "Hacked";
+      Debug.LogFormat(BlockedHack ? "[Backdoor Hacking #{0}] You blocked the hack." : "[Backdoor Hacking #{0}] You failed the hack.", ModuleId);
       double doubletemp = 0;
 
       if (HackResultText.text == "Hacked") {
@@ -376,6 +375,12 @@ public class BackdoorHacking : MonoBehaviour {
          yield return new WaitForSeconds(.01f);
       }
       yield return new WaitForSeconds(2.3f);
+      if (BlockedHack) {
+         Debug.LogFormat("[Backdoor Hacking #{0}] You gained {1} DOSCoin. Current total is {2}.", ModuleId, doubletemp, DOSCoinAmount);
+      }
+      else {
+         Debug.LogFormat("[Backdoor Hacking #{0}] You lost {1} DOSCoin. Current total is {2}.", ModuleId, doubletemp, DOSCoinAmount);
+      }
       BlockedHack = false;
       ResetAll();
       CurrentState = HackState.Idle;
@@ -435,6 +440,7 @@ public class BackdoorHacking : MonoBehaviour {
          BeingHacked = true;
       }
       CurrentState = HackState.GettingHacked;
+      Debug.LogFormat("[Backdoor Hacking #{0}] Hack occured at {1}.", ModuleId, Bomb.GetTime() / 60 + ":" + (int)(Bomb.GetTime() % 60));
       //Makes it so it does not spam editor. This should not be ingame.
       if (Application.isEditor) {
          Main.GetComponent<AudioListener>().enabled = false;
@@ -562,7 +568,7 @@ public class BackdoorHacking : MonoBehaviour {
       }
       //Debug.Log(ZoneCorrectClicks);
       //StartCoroutine(MemoryFraggerDisplay());
-      
+      Debug.LogFormat("[Backdoor Hacking #{0}] You successfully timed {1} line(s).", ModuleId, ZoneCorrectClicks);
       if (ZoneCorrectClicks == 5) {
          StartCoroutine(Instablock());
       }
@@ -601,6 +607,7 @@ public class BackdoorHacking : MonoBehaviour {
    #region Memory Fragger
 
    IEnumerator MemoryFraggerDisplay () {
+      Debug.LogFormat("[Backdoor Hacking #{0}] Enter Memory Fragger.", ModuleId);
       for (int i = 0; i < 8; i++) {
          MiniNodeTexts[i].text = "";
       }
@@ -686,7 +693,7 @@ public class BackdoorHacking : MonoBehaviour {
    }
 
    void ShowOptions () {
-      Debug.Log(Goal);
+      Debug.LogFormat("[Backdoor Hacking #{0}] Goal sequence for Memory Fragger is {1}.", ModuleId, Goal);
       for (int i = 0; i < Goal.Length; i++) {
          Retry:
          switch (Rnd.Range(0, 4)) {
@@ -767,6 +774,7 @@ public class BackdoorHacking : MonoBehaviour {
    #region Node Hacker
 
    void NodeMazeGeneration () {
+      Debug.LogFormat("[Backdoor Hacking #{0}] Enter Node Hacker.", ModuleId);
       OorD[0] = Rnd.Range(0, 2) == 0;
 
       for (int i = 1; i < 25; i++) {
@@ -860,7 +868,7 @@ public class BackdoorHacking : MonoBehaviour {
    #region Stack Pusher
 
    void GenerateStackPusher () {// -138.28 1 -133.348
-
+      Debug.LogFormat("[Backdoor Hacking #{0}] Enter Stack Pusher.", ModuleId);
       for (int i = 0; i < MiniCams.Length; i++) {
          MiniCams[i].gameObject.SetActive(false);
       }
