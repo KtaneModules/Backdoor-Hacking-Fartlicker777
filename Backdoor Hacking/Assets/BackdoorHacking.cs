@@ -12,6 +12,8 @@ using UnityEngine.Video;
  * I really should start using separate scripts. 
  */
 
+//
+
 public class BackdoorHacking : MonoBehaviour {
 
    public KMBombInfo Bomb;
@@ -158,7 +160,12 @@ public class BackdoorHacking : MonoBehaviour {
       Button.OnInteract += delegate () { ButtonPress(); return false; };
    }//-139.157 -139.725
 
-   void Start () {
+   void Start () { //transform.lossyScale
+      Debug.Log(TheWholeAssModMinusTheMod[0].transform.lossyScale);
+      for (int i = 0; i < TheWholeAssModMinusTheMod.Length; i++) {
+         TheWholeAssModMinusTheMod[i].transform.localScale = new Vector3((1 / TheWholeAssModMinusTheMod[i].transform.lossyScale.x) - .2f, (1 / TheWholeAssModMinusTheMod[i].transform.lossyScale.y) - .2f, (1 / TheWholeAssModMinusTheMod[i].transform.lossyScale.z) - .2f);
+      }
+      Debug.Log(TheWholeAssModMinusTheMod[0].transform.lossyScale);
       DOSCoinAmount = 0;
       BeingHacked = false;
       DOSCointGoal = 30 + Bomb.GetSolvableModuleNames().Count() * 15;
