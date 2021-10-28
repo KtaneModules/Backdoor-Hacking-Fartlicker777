@@ -865,9 +865,11 @@ public class BackdoorHacking : MonoBehaviour {
          switch (i) {
             case 12:
                StackNodes[i].sprite = StackPictures[2];
+               StackGrid[i] = StackNodeStates.Goal;
                break;
             default:
                StackNodes[i].sprite = StackPictures[0];
+               StackGrid[i] = StackNodeStates.Empty;
                break;
          }
       }
@@ -901,6 +903,18 @@ public class BackdoorHacking : MonoBehaviour {
    void StackReset () {
       HeldItem = TypesOfItems.Empty;
       NodesDunked = 0;
+      for (int i = 0; i < 25; i++) {
+         switch (i) {
+            case 12:
+               StackNodes[i].sprite = StackPictures[2];
+               StackGrid[i] = StackNodeStates.Goal;
+               break;
+            default:
+               StackNodes[i].sprite = StackPictures[0];
+               StackGrid[i] = StackNodeStates.Empty;
+               break;
+         }
+      }
    }
 
    #endregion
@@ -912,7 +926,7 @@ public class BackdoorHacking : MonoBehaviour {
       MiniCams[x].gameObject.SetActive(true);
    }
 
-   void Update () {
+   void Update () { //Where all the keyboard shit happens
       if (ModuleSolved) {
          return;
       }
@@ -979,6 +993,7 @@ public class BackdoorHacking : MonoBehaviour {
                         if (!Visited[CurrentNode - 6]) {
                            CurrentNode -= 6;
                            Path.Add(CurrentNode);
+                           Visited[CurrentNode] = true;
                            Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
                         }
                      }
@@ -987,6 +1002,7 @@ public class BackdoorHacking : MonoBehaviour {
                      if (CurrentNode > 4) {
                         if (!Visited[CurrentNode - 5]) {
                            CurrentNode -= 5;
+                           Visited[CurrentNode] = true;
                            Path.Add(CurrentNode);
                            Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
                         }
@@ -996,6 +1012,7 @@ public class BackdoorHacking : MonoBehaviour {
                      if (CurrentNode > 4 && CurrentNode % 5 != 4) {
                         if (!Visited[CurrentNode - 4]) {
                            CurrentNode -= 4;
+                           Visited[CurrentNode] = true;
                            Path.Add(CurrentNode);
                            Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
                         }
@@ -1007,6 +1024,7 @@ public class BackdoorHacking : MonoBehaviour {
                         if (!Visited[CurrentNode - 1]) {
                            CurrentNode -= 1;
                            Path.Add(CurrentNode);
+                           Visited[CurrentNode] = true;
                            Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
                         }
                      }
@@ -1019,6 +1037,7 @@ public class BackdoorHacking : MonoBehaviour {
                      if (CurrentNode % 5 != 4) {
                         if (!Visited[CurrentNode + 1]) {
                            CurrentNode += 1;
+                           Visited[CurrentNode] = true;
                            Path.Add(CurrentNode);
                            Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
                         }
@@ -1029,6 +1048,7 @@ public class BackdoorHacking : MonoBehaviour {
                      if (CurrentNode < 20 && CurrentNode % 5 != 0) {
                         if (!Visited[CurrentNode + 4]) {
                            CurrentNode += 4;
+                           Visited[CurrentNode] = true;
                            Path.Add(CurrentNode);
                            Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
                         }
@@ -1038,6 +1058,7 @@ public class BackdoorHacking : MonoBehaviour {
                      if (CurrentNode < 20) {
                         if (!Visited[CurrentNode + 5]) {
                            CurrentNode += 5;
+                           Visited[CurrentNode] = true;
                            Path.Add(CurrentNode);
                            Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
                         }
@@ -1047,6 +1068,7 @@ public class BackdoorHacking : MonoBehaviour {
                      if (CurrentNode < 20 && CurrentNode % 5 != 4) {
                         if (!Visited[CurrentNode + 6]) {
                            CurrentNode += 6;
+                           Visited[CurrentNode] = true;
                            Path.Add(CurrentNode);
                            Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
                         }
@@ -1064,31 +1086,31 @@ public class BackdoorHacking : MonoBehaviour {
          }
       }
       else if (CurrentState == HackState.StackPusher) {
-         if (Input.GetKeyDown(KeyCode.W) && ActualSelection > 4) {
-            StackGrid[ActualSelection]--;
-            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
+         if (Input.GetKeyDown(KeyCode.W) && ActualSelection > 4) { //All this wacky shit was an attempt to fix a bug. I will not revert this out of laziness.
             ActualSelection -= 5;
+            StackGrid[ActualSelection + 5]--;
+            StackNodes[ActualSelection + 5].sprite = StackPictures[(int) StackGrid[ActualSelection + 5]];
             StackGrid[ActualSelection]++;
             StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
          }
          else if (Input.GetKeyDown(KeyCode.A) && ActualSelection % 5 != 0) {
-            StackGrid[ActualSelection]--;
-            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
             ActualSelection--;
+            StackGrid[ActualSelection + 1]--;
+            StackNodes[ActualSelection + 1].sprite = StackPictures[(int) StackGrid[ActualSelection + 1]];
             StackGrid[ActualSelection]++;
             StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
          }
          else if (Input.GetKeyDown(KeyCode.S) && ActualSelection < 20) {
-            StackGrid[ActualSelection]--;
-            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
             ActualSelection += 5;
+            StackGrid[ActualSelection - 5]--;
+            StackNodes[ActualSelection - 5].sprite = StackPictures[(int) StackGrid[ActualSelection - 5]];
             StackGrid[ActualSelection]++;
             StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
          }
          else if (Input.GetKeyDown(KeyCode.D) && ActualSelection % 5 != 4) {
-            StackGrid[ActualSelection]--;
-            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
             ActualSelection++;
+            StackGrid[ActualSelection - 1]--;
+            StackNodes[ActualSelection - 1].sprite = StackPictures[(int) StackGrid[ActualSelection - 1]];
             StackGrid[ActualSelection]++;
             StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
          }
@@ -1106,6 +1128,7 @@ public class BackdoorHacking : MonoBehaviour {
                }
             }
             else if (StackGrid[ActualSelection] == StackNodeStates.StackH) {
+
                int YouPosition = 0;
                bool CanPickUp = false;
                for (int i = 0; i < 25; i++) {
@@ -1167,14 +1190,73 @@ public class BackdoorHacking : MonoBehaviour {
                }
             }
             else if (StackGrid[ActualSelection] == StackNodeStates.EmptyH) {
+
                if (HeldItem == TypesOfItems.Stack) {
-                  Audio.PlaySoundAtTransform("StackPlace", Cube[5].transform);
-                  StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
-                  StackNodes[ActualSelection].sprite = StackPictures[7];
-                  StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;
-                  StackGrid[ActualSelection] = StackNodeStates.StackH;
-                  IndexOfHeldStack = -1;
-                  HeldItem = TypesOfItems.Empty;
+                  int YouPosition = 0;
+                  bool CanPlace = false;
+                  for (int i = 0; i < 25; i++) {
+                     if (StackGrid[i] == StackNodeStates.YouH || StackGrid[i] == StackNodeStates.You) {
+                        YouPosition = i;
+                     }
+                  }
+                  if (ActualSelection == 0) {
+                     if (YouPosition == 1 || YouPosition == 5 || YouPosition == 6) {
+                        CanPlace = true;
+                     }
+                  }
+                  else if (ActualSelection == 4) {
+                     if (YouPosition == 3 || YouPosition == 8 || YouPosition == 9) {
+                        CanPlace = true;
+                     }
+                  }
+                  else if (ActualSelection == 20) {
+                     if (YouPosition == 15 || YouPosition == 16 || YouPosition == 21) {
+                        CanPlace = true;
+                     }
+                  }
+                  else if (ActualSelection == 24) {
+                     if (YouPosition == 18 || YouPosition == 19 || YouPosition == 23) {
+                        CanPlace = true;
+                     }
+                  }
+                  else if (ActualSelection > 19) {
+                     if (YouPosition == ActualSelection - 6 || YouPosition == ActualSelection - 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1) {
+                        CanPlace = true;
+                     }
+                  }
+                  else if (ActualSelection < 5) {
+                     if (YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 6) {
+                        CanPlace = true;
+                     }
+                  }
+                  else if (ActualSelection % 5 == 0) {
+                     if (YouPosition == ActualSelection - 5 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 6) {
+                        CanPlace = true;
+                     }
+                  }
+                  else if (ActualSelection % 5 == 4) {
+                     if (YouPosition == ActualSelection - 5 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection - 6) {
+                        CanPlace = true;
+                     }
+                  }
+                  else if (YouPosition == ActualSelection - 6 || YouPosition == ActualSelection - 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 6) {
+                     CanPlace = true;
+                  }
+
+                  if (!CanPlace) {
+                     StartCoroutine(HackResult());
+                  }
+                  else {
+                     Audio.PlaySoundAtTransform("StackPlace", Cube[5].transform);
+                     StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
+                     StackNodes[ActualSelection].sprite = StackPictures[7];
+                     StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;
+                     StackGrid[ActualSelection] = StackNodeStates.StackH;
+                     IndexOfHeldStack = -1;
+                     HeldItem = TypesOfItems.Empty;
+                  }
+
+
                }
                else if (HeldItem == TypesOfItems.Move) {
                   Audio.PlaySoundAtTransform("MovePlace", Cube[5].transform);
