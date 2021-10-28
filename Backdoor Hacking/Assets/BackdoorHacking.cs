@@ -161,7 +161,7 @@ public class BackdoorHacking : MonoBehaviour {
    void Start () { //transform.lossyScale
       Debug.Log(TheWholeAssModMinusTheMod[0].transform.lossyScale);
       for (int i = 0; i < TheWholeAssModMinusTheMod.Length; i++) {
-         TheWholeAssModMinusTheMod[i].transform.localScale = new Vector3((1 / TheWholeAssModMinusTheMod[i].transform.lossyScale.x) - .2f, (1 / TheWholeAssModMinusTheMod[i].transform.lossyScale.y) - .2f, (1 / TheWholeAssModMinusTheMod[i].transform.lossyScale.z) - .2f);
+         TheWholeAssModMinusTheMod[i].transform.localScale = new Vector3((float) ((1 / TheWholeAssModMinusTheMod[i].transform.lossyScale.x) - .2), (float) ((1 / TheWholeAssModMinusTheMod[i].transform.lossyScale.y) - .2), (float) ((1 / TheWholeAssModMinusTheMod[i].transform.lossyScale.z) - .2));
       }
       Debug.Log(TheWholeAssModMinusTheMod[0].transform.lossyScale);
       DOSCoinAmount = 0;
@@ -261,10 +261,7 @@ public class BackdoorHacking : MonoBehaviour {
    }
 
    IEnumerator HackResult () {
-      for (int j = 0; j < MiniCams.Length; j++) {
-         MiniCams[j].gameObject.SetActive(false);
-      }
-      MiniCams[3].gameObject.SetActive(true);
+      CameraSwitcher(3);
       CurrentState = HackState.GettingHacked;
       Audio.PlaySoundAtTransform("ResultsSound", Cube[3].transform);
       HackResultText.text = BlockedHack ? "Hack Blocked" : "Hacked";
@@ -383,19 +380,10 @@ public class BackdoorHacking : MonoBehaviour {
       }
       BlockedHack = false;
       ResetAll();
-      CurrentState = HackState.Idle;
-      MiniCams[3].gameObject.SetActive(false);
-      if (Application.isEditor) {
-         Main.GetComponent<AudioListener>().enabled = true;
-      }
-      StartCoroutine(Timer());
    }
 
    IEnumerator Instablock () {
-      for (int j = 0; j < MiniCams.Length; j++) {
-         MiniCams[j].gameObject.SetActive(false);
-      }
-      MiniCams[3].gameObject.SetActive(true);
+      CameraSwitcher(3);
       CurrentState = HackState.GettingHacked;
       Audio.PlaySoundAtTransform("ResultsSound", Cube[3].transform);
       HackResultText.text = "Instablocked";
@@ -428,9 +416,19 @@ public class BackdoorHacking : MonoBehaviour {
       ResetMemoryInfo();
       ResetNodeInfo();
       StackReset();
+
+      BeingHacked = false;
+      CurrentState = HackState.Idle;
+      MiniCams[3].gameObject.SetActive(false);
+      if (Application.isEditor) {
+         Main.GetComponent<AudioListener>().enabled = true;
+      }
+      StopAllCoroutines();
+      StartCoroutine(Timer());
    }
 
    IEnumerator IBeViewingTheseBitches () {
+
       if (BeingHacked) {
          StopAllCoroutines();
          Bar.GetComponent<MeshRenderer>().material = BarColors[2];
@@ -440,28 +438,26 @@ public class BackdoorHacking : MonoBehaviour {
          BeingHacked = true;
       }
       CurrentState = HackState.GettingHacked;
-      Debug.LogFormat("[Backdoor Hacking #{0}] Hack occured at {1}.", ModuleId, Bomb.GetTime() / 60 + ":" + (int)(Bomb.GetTime() % 60));
+      Debug.LogFormat("[Backdoor Hacking #{0}] Hack occured at {1}.", ModuleId, (int) (Bomb.GetTime() / 60) + ":" + ((int) Bomb.GetTime() % 60).ToString("00"));
       //Makes it so it does not spam editor. This should not be ingame.
       if (Application.isEditor) {
          Main.GetComponent<AudioListener>().enabled = false;
       }
       //Switches camera
-      MiniCams[0].gameObject.SetActive(true);
+      CameraSwitcher(0);
 
       //Determines where the good spots are
       for (int i = 0; i < 5; i++) {
          ZoneText[i].text = "";
-         ZoneWallCorrectSpots[i] = UnityEngine.Random.Range(0, 28);
+         ZoneWallCorrectSpots[i] = Rnd.Range(0, 28);
       }
       Audio.PlaySoundAtTransform("GettingGotAudio", Cube[0].transform);
       Background.Play();
-      yield return new WaitForSeconds(11.9f);
+      yield return new WaitForSeconds(11.3f);
       Background.Stop();
-      MiniCams[0].gameObject.SetActive(false);
-
-      //Switches to Zonewall cam
-      MiniCams[1].gameObject.SetActive(true);
       StartCoroutine(ZoneWall());
+      //Debug.Log("L");
+      //Debug.Log("W");
    }
 
    #endregion
@@ -469,6 +465,7 @@ public class BackdoorHacking : MonoBehaviour {
    #region Zonewalling
 
    IEnumerator ZoneWall () { //Generates the 5 lines of [......]
+      CameraSwitcher(1);
       StartCoroutine(ZoneWallTextGenerate(0));
       StartCoroutine(ZoneWallTextGenerate(1));
       yield return new WaitForSeconds(.2f);
@@ -597,6 +594,7 @@ public class BackdoorHacking : MonoBehaviour {
    void ResetZoneWallInfo () {
       for (int i = 0; i < 5; i++) {
          ZoneWallCorrectSpots[i] = 0;
+         ZoneText[i].text = "";
       }
       ZoneClicks = -1;
       ZoneCorrectClicks = 0;
@@ -613,10 +611,7 @@ public class BackdoorHacking : MonoBehaviour {
       }
       string temp = "";
       string temp2 = "";
-      for (int i = 0; i < MiniCams.Length; i++) {
-         MiniCams[i].gameObject.SetActive(false);
-      }
-      MiniCams[2].gameObject.SetActive(true);
+      CameraSwitcher(2);
       for (int i = 0; i < 8; i++) {
          Nodes[i].gameObject.SetActive(false);
       }
@@ -774,6 +769,7 @@ public class BackdoorHacking : MonoBehaviour {
    #region Node Hacker
 
    void NodeMazeGeneration () {
+      CameraSwitcher(4);
       Debug.LogFormat("[Backdoor Hacking #{0}] Enter Node Hacker.", ModuleId);
       OorD[0] = Rnd.Range(0, 2) == 0;
 
@@ -796,11 +792,6 @@ public class BackdoorHacking : MonoBehaviour {
    }
 
    IEnumerator NodeMazeReveal () {
-      for (int i = 0; i < MiniCams.Length; i++) {
-         MiniCams[i].gameObject.SetActive(false);
-      }
-      MiniCams[4].gameObject.SetActive(true);
-
       for (int i = 0; i < 25; i++) {
          if (OorD[i]) {
             Diagonals[i].SetActive(true);
@@ -869,10 +860,7 @@ public class BackdoorHacking : MonoBehaviour {
 
    void GenerateStackPusher () {// -138.28 1 -133.348
       Debug.LogFormat("[Backdoor Hacking #{0}] Enter Stack Pusher.", ModuleId);
-      for (int i = 0; i < MiniCams.Length; i++) {
-         MiniCams[i].gameObject.SetActive(false);
-      }
-      MiniCams[5].gameObject.SetActive(true);
+      CameraSwitcher(5);
       for (int i = 0; i < 25; i++) {
          switch (i) {
             case 12:
@@ -916,6 +904,13 @@ public class BackdoorHacking : MonoBehaviour {
    }
 
    #endregion
+
+   void CameraSwitcher (int x) {
+      for (int i = 0; i < MiniCams.Length; i++) {
+         MiniCams[i].gameObject.SetActive(false);
+      }
+      MiniCams[x].gameObject.SetActive(true);
+   }
 
    void Update () {
       if (ModuleSolved) {
@@ -1134,7 +1129,7 @@ public class BackdoorHacking : MonoBehaviour {
                   }
                }
                else if (ActualSelection == 24) {
-                  if (YouPosition == 18 || YouPosition == 19|| YouPosition == 23) {
+                  if (YouPosition == 18 || YouPosition == 19 || YouPosition == 23) {
                      CanPickUp = true;
                   }
                }
