@@ -1973,7 +1973,7 @@ Prefab:
     - target: {fileID: 114848120511536268, guid: 8814ea52310d2614a9feda02ec355ae4,
         type: 2}
       propertyPath: AudioClips.Array.size
-      value: 17
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 439642, guid: 8814ea52310d2614a9feda02ec355ae4, type: 2}
       propertyPath: m_LocalPosition.x
@@ -2097,6 +2097,16 @@ Prefab:
       propertyPath: FrontFaceOnly
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114848120511536268, guid: 8814ea52310d2614a9feda02ec355ae4,
+        type: 2}
+      propertyPath: AudioClips.Array.data[17]
+      value: 
+      objectReference: {fileID: 8300000, guid: 5827fd458ed38d24cb3c82bc377f53ce, type: 3}
+    - target: {fileID: 114848120511536268, guid: 8814ea52310d2614a9feda02ec355ae4,
+        type: 2}
+      propertyPath: AudioClips.Array.data[18]
+      value: 
+      objectReference: {fileID: 8300000, guid: 83f0fe33b4012c64493784aab77c5ab8, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8814ea52310d2614a9feda02ec355ae4, type: 2}
   m_IsPrefabParent: 0

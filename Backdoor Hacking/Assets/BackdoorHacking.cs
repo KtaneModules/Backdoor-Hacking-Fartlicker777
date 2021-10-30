@@ -94,7 +94,9 @@ public class BackdoorHacking : MonoBehaviour {
    bool[] Visited = new bool[25];
    List<int> Path = new List<int> { };
    int CurrentNode = 0;
-   int[] Spots = new int[25];
+   //int[] Spots = new int[25];
+   List<int> PathFinder = new List<int> { };
+   List<int> HighlightedNodes = new List<int> { };
 
    //Stack Pusher Shit
    public SpriteRenderer[] StackNodes;
@@ -175,25 +177,25 @@ public class BackdoorHacking : MonoBehaviour {
 
    void Buy (KMSelectable Button) {
       Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Button.transform);
-      for (int i = 0; i < 3; i++) {
-         if (Button == BuyButtons[0]) {
-            if (DOSCoinAmount >= 100 && Multiplier) {
-               Multiplier = true;
-               DOSCoinAmount -= 100;
-            }
+      if (Button == BuyButtons[0]) {
+         if (DOSCoinAmount >= 100 && !Multiplier) {
+            Multiplier = true;
+            DOSCoinAmount -= 100;
+            Debug.LogFormat("[Backdoor Hacking #{0}] You bought the multiplier boost!", ModuleId);
          }
-         if (Button == BuyButtons[1]) {
-            if (DOSCoinAmount >= 75 && DecreaseCooldown) {
-               DecreaseCooldown = true;
-               DOSCoinAmount -= 75;
-            }
+      }
+      if (Button == BuyButtons[1]) {
+         if (DOSCoinAmount >= 75 && !DecreaseCooldown) {
+            DecreaseCooldown = true;
+            DOSCoinAmount -= 75;
+            Debug.LogFormat("[Backdoor Hacking #{0}] You bought the decrease cooldown boost!", ModuleId);
          }
-         if (Button == BuyButtons[2]) {
-            if (DOSCoinAmount >= DOSCointGoal) {
-               GetComponent<KMBombModule>().HandlePass();
-               DOSCoinAmount -= DOSCointGoal;
-               ModuleSolved = true;
-            }
+      }
+      if (Button == BuyButtons[2]) {
+         if (DOSCoinAmount >= DOSCointGoal) {
+            GetComponent<KMBombModule>().HandlePass();
+            DOSCoinAmount -= DOSCointGoal;
+            ModuleSolved = true;
          }
       }
    }
@@ -201,28 +203,33 @@ public class BackdoorHacking : MonoBehaviour {
    void ButtonPress () {
       Button.AddInteractionPunch();
       Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Button.transform);
-      if (Waiting) {
+      if (Waiting || BeingHacked) {
          return;
       }
       //StartCoroutine(HackResult());
       //StartCoroutine(IBeViewingTheseBitches());
-      if (!Connected) {
-         if (Rnd.Range(0, 5) == 0) {
-            CallHack();
+      if (Application.isEditor) {
+         CallHack();
+      }
+      else {
+         if (!Connected) {
+            if (Rnd.Range(0, 5) == 0) {
+               CallHack();
+            }
+            else {
+               StartCoroutine(Wait());
+            }
          }
          else {
             StartCoroutine(Wait());
          }
-      }
-      else {
-         StartCoroutine(Wait());
-      }
-      Connected ^= true;
-      if (Connected) {
-         ConnectionText.text = "Disconnect";
-      }
-      else {
-         ConnectionText.text = "Connect";
+         Connected ^= true;
+         if (Connected) {
+            ConnectionText.text = "Disconnect";
+         }
+         else {
+            ConnectionText.text = "Connect";
+         }
       }
    }
 
@@ -385,7 +392,7 @@ public class BackdoorHacking : MonoBehaviour {
    IEnumerator Instablock () {
       CameraSwitcher(3);
       CurrentState = HackState.GettingHacked;
-      Audio.PlaySoundAtTransform("ResultsSound", Cube[3].transform);
+      Audio.PlaySoundAtTransform("ResultsSound", MiniCams[3].transform);
       HackResultText.text = "Instablocked";
       double doubletemp = 0;
 
@@ -417,6 +424,7 @@ public class BackdoorHacking : MonoBehaviour {
       ResetNodeInfo();
       StackReset();
 
+      Waiting = false;
       BeingHacked = false;
       CurrentState = HackState.Idle;
       MiniCams[3].gameObject.SetActive(false);
@@ -428,36 +436,30 @@ public class BackdoorHacking : MonoBehaviour {
    }
 
    IEnumerator IBeViewingTheseBitches () {
-
-      if (BeingHacked) {
-         StopAllCoroutines();
-         Bar.GetComponent<MeshRenderer>().material = BarColors[2];
-         StartCoroutine(Timer());
-      }
-      else {
+      if (!BeingHacked) {
          BeingHacked = true;
-      }
-      CurrentState = HackState.GettingHacked;
-      Debug.LogFormat("[Backdoor Hacking #{0}] Hack occured at {1}.", ModuleId, (int) (Bomb.GetTime() / 60) + ":" + ((int) Bomb.GetTime() % 60).ToString("00"));
-      //Makes it so it does not spam editor. This should not be ingame.
-      if (Application.isEditor) {
-         Main.GetComponent<AudioListener>().enabled = false;
-      }
-      //Switches camera
-      CameraSwitcher(0);
+         CurrentState = HackState.GettingHacked;
+         Debug.LogFormat("[Backdoor Hacking #{0}] Hack occured at {1}.", ModuleId, (int) (Bomb.GetTime() / 60) + ":" + ((int) Bomb.GetTime() % 60).ToString("00"));
+         //Makes it so it does not spam editor. This should not be ingame.
+         if (Application.isEditor) {
+            Main.GetComponent<AudioListener>().enabled = false;
+         }
+         //Switches camera
+         CameraSwitcher(0);
 
-      //Determines where the good spots are
-      for (int i = 0; i < 5; i++) {
-         ZoneText[i].text = "";
-         ZoneWallCorrectSpots[i] = Rnd.Range(0, 28);
+         //Determines where the good spots are
+         for (int i = 0; i < 5; i++) {
+            ZoneText[i].text = "";
+            ZoneWallCorrectSpots[i] = Rnd.Range(0, 28);
+         }
+         Audio.PlaySoundAtTransform("GettingGotAudio", Cube[0].transform);
+         Background.Play();
+         yield return new WaitForSeconds(11.3f);
+         Background.Stop();
+         StartCoroutine(ZoneWall());
+         //Debug.Log("L");
+         //Debug.Log("W");
       }
-      Audio.PlaySoundAtTransform("GettingGotAudio", Cube[0].transform);
-      Background.Play();
-      yield return new WaitForSeconds(11.3f);
-      Background.Stop();
-      StartCoroutine(ZoneWall());
-      //Debug.Log("L");
-      //Debug.Log("W");
    }
 
    #endregion
@@ -469,7 +471,7 @@ public class BackdoorHacking : MonoBehaviour {
       StartCoroutine(ZoneWallTextGenerate(0));
       StartCoroutine(ZoneWallTextGenerate(1));
       yield return new WaitForSeconds(.2f);
-      Audio.PlaySoundAtTransform("Countdown", Cube[1].transform);
+      Audio.PlaySoundAtTransform("Countdown", MiniCams[1].transform);
       StartCoroutine(ZoneWallTextGenerate(2));
       yield return new WaitForSeconds(.2f);
       StartCoroutine(ZoneWallTextGenerate(3));
@@ -483,7 +485,7 @@ public class BackdoorHacking : MonoBehaviour {
       ZoneText[index].text += "[";
       for (int i = 0; i < 30; i++) {
          if (i == ZoneWallCorrectSpots[index] || i == ZoneWallCorrectSpots[index] + 1 || i == ZoneWallCorrectSpots[index] + 2) {
-            Debug.Log(ZoneWallCorrectSpots[index]);
+            //Debug.Log(ZoneWallCorrectSpots[index]);
             ZoneText[index].text += "<color=red>.</color>";
          }
          else {
@@ -492,7 +494,6 @@ public class BackdoorHacking : MonoBehaviour {
          yield return new WaitForSeconds(.01f);
       }
       ZoneText[index].text += "]";
-      Debug.Log(ZoneText[index].text);
    }
 
    IEnumerator ZoneWallCursorIndex () {
@@ -547,7 +548,7 @@ public class BackdoorHacking : MonoBehaviour {
             if (ZoneClicks == i) {
                break;
             }
-            Audio.PlaySoundAtTransform("RightBump", Cube[1].transform);
+            Audio.PlaySoundAtTransform("RightBump", MiniCams[1].transform);
             for (int j = ZoneText[i].text.Length - 2; j > 0; j--) {
                if (ZoneClicks == i) {
                   break;
@@ -560,7 +561,7 @@ public class BackdoorHacking : MonoBehaviour {
                   yield return new WaitForSecondsRealtime(.015f);
                }
             }
-            Audio.PlaySoundAtTransform("LeftBump", Cube[1].transform);
+            Audio.PlaySoundAtTransform("LeftBump", MiniCams[1].transform);
          }
       }
       //Debug.Log(ZoneCorrectClicks);
@@ -573,9 +574,9 @@ public class BackdoorHacking : MonoBehaviour {
          switch (Rnd.Range(0, 10)) {
             case 0:
             case 1:
-            case 2:
                NodeMazeGeneration();
                break;
+            case 2:
             case 3:
             case 4:
             case 5:
@@ -677,9 +678,11 @@ public class BackdoorHacking : MonoBehaviour {
             }
             break;
       }
+      Audio.PlaySoundAtTransform("Countdown", MiniCams[2].transform);
+      yield return new WaitForSeconds(5.562f);
       for (int i = 0; i < Goal.Length; i++) {
          MainNodeText.text = Goal[i].ToString();
-         Audio.PlaySoundAtTransform("MemoryDisplayBeep", Cube[2].transform);
+         Audio.PlaySoundAtTransform("MemoryDisplayBeep", MiniCams[2].transform);
          yield return new WaitForSeconds(1f);
       }
       MainNodeText.text = "";
@@ -771,16 +774,107 @@ public class BackdoorHacking : MonoBehaviour {
    void NodeMazeGeneration () {
       CameraSwitcher(4);
       Debug.LogFormat("[Backdoor Hacking #{0}] Enter Node Hacker.", ModuleId);
-      OorD[0] = Rnd.Range(0, 2) == 0;
 
-      for (int i = 1; i < 25; i++) {
-         OorD[i] = !OorD[i - 1];
-         Spots[i] = i;
+      int StopAll = 0;     //Creates a random path for the mod to take. If a path fails to generate within the first 1000 iterations, it goes to a default
+      Retry:
+      if (StopAll == 1000) {
+         goto EndOfLoop;
       }
-      for (int i = 0; i < 4; i++) {
-         OorD[Rnd.Range(0, 25)] = Rnd.Range(0, 2) == 1;
+      PathFinder.Clear();
+      PathFinder.Add(Rnd.Range(0, 5));
+      bool[] Taken = new bool[25];
+      Taken[PathFinder[0]] = true;
+      int[] Directions = { -6, -5, -4, -1, 1, 4, 5, 6 };
+
+      for (int i = 1; i < (5 - ZoneCorrectClicks) * 2 - 1; i++) {
+         Directions.Shuffle();
+         for (int j = 0; j < 8; j++) {
+
+            bool isValid = true;
+            int cur = PathFinder[i - 1];
+            int nex = PathFinder[i - 1] + Directions[j];
+
+            if ((cur == 0 && !(nex == 1 || nex == 5 || nex == 6))) {    //Deals with wrapping around bullshit
+               isValid = false;
+            }
+            else if ((cur == 4 && !(nex == 3 || nex == 6 || nex == 9))) {
+               isValid = false;
+            }
+            else if ((cur < 5 && !(nex == cur - 1 || nex == cur + 1 || nex == cur + 4 || nex == cur + 5 || nex == cur + 6))) {
+               isValid = false;
+            }
+            else if ((cur == 20 && !(nex == 21 || nex == 15 || nex == 16))) {
+               isValid = false;
+            }
+            else if ((cur == 24 && !(nex == 18 || nex == 19 || nex == 23))) {
+               isValid = false;
+            }
+            else if ((cur > 20 && !(nex == cur - 1 || nex == cur + 1 || nex == cur - 4 || nex == cur - 5 || nex == cur - 6))) {
+               isValid = false;
+            }
+            else if ((cur % 5 == 4 && !(nex == cur - 6 || nex == cur - 5 || nex == cur - 1 || nex == cur + 4 || nex == cur + 5))) {
+               isValid = false;
+            }
+            else if ((cur % 5 == 0 && !(nex == cur - 5 || nex == cur - 4 || nex == cur + 1 || nex == cur + 5 || nex == cur + 6))) {
+               isValid = false;
+            }
+
+
+
+            if (PathFinder[i - 1] + Directions[j] < 25 && PathFinder[i - 1] + Directions[j] >= 0 && isValid) {
+               Debug.Log(PathFinder.Count());
+               if (!Taken[PathFinder[i - 1] + Directions[j]]) {
+                  Taken[PathFinder[i - 1] + Directions[j]] = true;
+                  PathFinder.Add(PathFinder[i - 1] + Directions[j]);
+                  break;
+               }
+            }
+            if (j == 7 && PathFinder.Count() - 1 < ZoneCorrectClicks) {       //Doesn't have to reach correct clicks * 2 - 1, but has to at least be enough for all to fit
+               StopAll++;
+               goto Retry;
+            }
+            else if (j == 7) {
+               goto EndOfLoop;
+            }
+         }
       }
-      Spots.Shuffle();
+      EndOfLoop:
+      string[] LogCoords = { "A1", "A2", "A3", "A4", "A5", "B1", "B2", "B3", "B4", "B5", "C1", "C2", "C3", "C4", "C5", "D1", "D2", "D3", "D4", "D5", "E1", "E2", "E3", "E4", "E5" };
+      CurrentNode = PathFinder[0];
+      OorD[CurrentNode] = Rnd.Range(0, 2) == 0;
+      for (int i = 1; i < PathFinder.Count; i++) {
+         OorD[PathFinder[i]] = !OorD[PathFinder[i - 1]];
+      }
+      for (int i = 0; i < 25; i++) {
+         if (!PathFinder.Contains(i) && i != 0) {
+            OorD[i] = Rnd.Range(0, 100) <= 70 ? !OorD[i - 1] : OorD[i - 1];
+         }
+      }
+
+      Debug.LogFormat("[Backdoor Hacking #{0}] The grid is :", ModuleId);
+      for (int i = 0; i < 5; i++) {
+         Debug.LogFormat("[Backdoor Hacking #{0}] {1} {2} {3} {4} {5}", ModuleId, OorD[i] ? "◆" : "■", OorD[i + 5] ? "◆" : "■", OorD[i + 10] ? "◆" : "■", OorD[i + 15] ? "◆" : "■", OorD[i + 20] ? "◆" : "■");
+      }
+
+
+      Debug.LogFormat("[Backdoor Hacking #{0}] A possible path is:", ModuleId);
+      for (int i = 0; i < PathFinder.Count(); i++) {
+         Debug.LogFormat("[Backdoor Hacking #{0}] {1}", ModuleId, LogCoords[PathFinder[i]]);
+      }
+
+      PathFinder.RemoveAt(0);
+      PathFinder.Shuffle();
+
+      for (int i = 0; i < 5 - ZoneCorrectClicks; i++) {
+         HighlightedNodes.Add(PathFinder[i]);
+      }
+
+      Debug.LogFormat("[Backdoor Hacking #{0}] Highlighted nodes are:", ModuleId);
+      for (int i = 0; i < HighlightedNodes.Count(); i++) {
+         Debug.LogFormat("[Backdoor Hacking #{0}] {1}", ModuleId, LogCoords[HighlightedNodes[i]]);
+      }
+
+
       for (int i = 0; i < 25; i++) {
          Highlights[i].SetActive(false);
          Centers[i].SetActive(false);
@@ -805,13 +899,12 @@ public class BackdoorHacking : MonoBehaviour {
             Centers[i * 5 + j].SetActive(true);
             AlsoCenterGodDamnIt[i * 5 + j].SetActive(true);
          }
-         Audio.PlaySoundAtTransform("NodeHackerSetup", Cube[4].transform);
+         Audio.PlaySoundAtTransform("NodeHackerSetup", MiniCams[4].transform);
          yield return new WaitForSecondsRealtime(.2f);
       }
       for (int i = 0; i < 5 - ZoneCorrectClicks; i++) {
-         Highlights[Spots[i]].SetActive(true);
+         Highlights[PathFinder[i]].SetActive(true);
       }
-      CurrentNode = Rnd.Range(0, 5);
       Path.Add(CurrentNode);
       Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
       CurrentState = HackState.NodeHacker;
@@ -822,7 +915,7 @@ public class BackdoorHacking : MonoBehaviour {
       yield return new WaitForSeconds(.1f);
       for (int j = 1; j < Path.Count(); j++) {
          Centers[Path[j]].GetComponent<MeshRenderer>().material = NodeHackerColors[1];
-         Audio.PlaySoundAtTransform("CheckNoise", Cube[4].transform);
+         Audio.PlaySoundAtTransform("CheckNoise", MiniCams[4].transform);
          yield return new WaitForSeconds(.1f);
          if (OorD[Path[j - 1]] == OorD[Path[j]]) {
             /*Debug.Log(OorD[Path[j - 1]]);
@@ -834,7 +927,7 @@ public class BackdoorHacking : MonoBehaviour {
          }
       }
       for (int j = 0; j < 5 - ZoneCorrectClicks; j++) {
-         if (!Path.Contains(Spots[j])) {
+         if (!Path.Contains(PathFinder[j])) {
             StartCoroutine(HackResult());
             yield break;
          }
@@ -948,6 +1041,10 @@ public class BackdoorHacking : MonoBehaviour {
          if (Input.GetKeyDown(KeyCode.Space)) {
             if (ZoneText[ZoneClicks + 1].text.IndexOf("<color=red>|</color>") != -1) {
                ZoneCorrectClicks++;
+               Audio.PlaySoundAtTransform("Good", MiniCams[1].transform);
+            }
+            else {
+               Audio.PlaySoundAtTransform("Bad", MiniCams[1].transform);
             }
             ZoneClicks++;
          }
@@ -956,10 +1053,10 @@ public class BackdoorHacking : MonoBehaviour {
          for (int i = 0; i < TheKeys.Count(); i++) {
             if (Input.GetKeyDown(TheKeys[i])) {
                if (MemoryInput.Length != Goal.Length) {
-                  Audio.PlaySoundAtTransform("MemorySelectionBeep", Cube[2].transform);
+                  Audio.PlaySoundAtTransform("MemorySelectionBeep", MiniCams[2].transform);
                }
                else {
-                  Audio.PlaySoundAtTransform("MemorySelectionBeepFinal", Cube[3].transform);
+                  Audio.PlaySoundAtTransform("MemorySelectionBeepFinal", MiniCams[3].transform);
                }
                string temp = "";
                for (int k = 0; k < 8; k++) {
@@ -1076,12 +1173,10 @@ public class BackdoorHacking : MonoBehaviour {
                      break;
                }
                bool WasHighlighted = false;
-               for (int j = 0; j < ZoneCorrectClicks; j++) {
-                  if (Spots[j] == Path[Path.Count() - 1]) {
-                     WasHighlighted = true;
-                  }
+               if (PathFinder.Contains(Path[Path.Count() - 2])) {
+                  WasHighlighted = true;
                }
-               Audio.PlaySoundAtTransform(WasHighlighted ? "ExitedHighlight" : "Moved", Cube[4].transform);
+               Audio.PlaySoundAtTransform(WasHighlighted ? "ExitedHighlight" : "Moved", MiniCams[4].transform);
             }
          }
       }
