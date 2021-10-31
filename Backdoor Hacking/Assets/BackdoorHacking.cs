@@ -820,8 +820,6 @@ public class BackdoorHacking : MonoBehaviour {
                isValid = false;
             }
 
-
-
             if (PathFinder[i - 1] + Directions[j] < 25 && PathFinder[i - 1] + Directions[j] >= 0 && isValid) {
                Debug.Log(PathFinder.Count());
                if (!Taken[PathFinder[i - 1] + Directions[j]]) {
@@ -830,7 +828,7 @@ public class BackdoorHacking : MonoBehaviour {
                   break;
                }
             }
-            if (j == 7 && PathFinder.Count() - 1 < ZoneCorrectClicks) {       //Doesn't have to reach correct clicks * 2 - 1, but has to at least be enough for all to fit
+            if (j == 7 && PathFinder.Count() - 1 < (5 - ZoneCorrectClicks)) {       //Doesn't have to reach correct clicks * 2 - 1, but has to at least be enough for all to fit
                StopAll++;
                goto Retry;
             }
