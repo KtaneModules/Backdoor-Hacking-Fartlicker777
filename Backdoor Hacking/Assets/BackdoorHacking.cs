@@ -169,7 +169,7 @@ public class BackdoorHacking : MonoBehaviour {
       DOSCoinAmount = 0;
       BeingHacked = false;
       DOSCointGoal = 30 + Bomb.GetSolvableModuleNames().Count() * 15;
-      Debug.LogFormat("[Backdoor Hacking #{0}] Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz", ModuleId);
+      Debug.LogFormat("[Backdoor Hacking #{0}] Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz. Version number is 1.0.", ModuleId);
       StartCoroutine(Timer());
    }
 
@@ -571,7 +571,7 @@ public class BackdoorHacking : MonoBehaviour {
          StartCoroutine(Instablock());
       }
       else {
-         switch (Rnd.Range(0, 10)) {
+         switch (Rnd.Range(0, 2)) {
             case 0:
             case 1:
                NodeMazeGeneration();
@@ -778,6 +778,7 @@ public class BackdoorHacking : MonoBehaviour {
       int StopAll = 0;     //Creates a random path for the mod to take. If a path fails to generate within the first 1000 iterations, it goes to a default
       Retry:
       if (StopAll == 1000) {
+         Debug.Log("WEE WOO!!! WE RAN INTO THE 1000 TIMVI LIMIT. THIS IS THE ISSUE.");
          goto EndOfLoop;
       }
       PathFinder.Clear();
@@ -839,6 +840,7 @@ public class BackdoorHacking : MonoBehaviour {
          }
       }
       EndOfLoop:
+      //Debug.Log(StopAll);
       string[] LogCoords = { "A1", "A2", "A3", "A4", "A5", "B1", "B2", "B3", "B4", "B5", "C1", "C2", "C3", "C4", "C5", "D1", "D2", "D3", "D4", "D5", "E1", "E2", "E3", "E4", "E5" };
       CurrentNode = PathFinder[0];
       OorD[CurrentNode] = Rnd.Range(0, 2) == 0;
@@ -856,6 +858,7 @@ public class BackdoorHacking : MonoBehaviour {
          Debug.LogFormat("[Backdoor Hacking #{0}] {1} {2} {3} {4} {5}", ModuleId, OorD[i] ? "◆" : "■", OorD[i + 5] ? "◆" : "■", OorD[i + 10] ? "◆" : "■", OorD[i + 15] ? "◆" : "■", OorD[i + 20] ? "◆" : "■");
       }
 
+      Debug.Log(PathFinder.Count());
 
       Debug.LogFormat("[Backdoor Hacking #{0}] A possible path is:", ModuleId);
       for (int i = 0; i < PathFinder.Count(); i++) {
