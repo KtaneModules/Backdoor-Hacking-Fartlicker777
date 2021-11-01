@@ -176,6 +176,7 @@ public class BackdoorHacking : MonoBehaviour {
    #region Buttons
 
    void Buy (KMSelectable Button) {
+      Button.AddInteractionPunch();
       Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Button.transform);
       if (Button == BuyButtons[0]) {
          if (DOSCoinAmount >= 100 && !Multiplier) {
@@ -195,6 +196,7 @@ public class BackdoorHacking : MonoBehaviour {
          if (DOSCoinAmount >= DOSCointGoal) {
             GetComponent<KMBombModule>().HandlePass();
             DOSCoinAmount -= DOSCointGoal;
+            StopAllCoroutines();
             ModuleSolved = true;
          }
       }
@@ -440,10 +442,6 @@ public class BackdoorHacking : MonoBehaviour {
          BeingHacked = true;
          CurrentState = HackState.GettingHacked;
          Debug.LogFormat("[Backdoor Hacking #{0}] Hack occured at {1}.", ModuleId, (int) (Bomb.GetTime() / 60) + ":" + ((int) Bomb.GetTime() % 60).ToString("00"));
-         //Makes it so it does not spam editor. This should not be ingame.
-         if (Application.isEditor) {
-            Main.GetComponent<AudioListener>().enabled = false;
-         }
          //Switches camera
          CameraSwitcher(0);
 
@@ -571,7 +569,7 @@ public class BackdoorHacking : MonoBehaviour {
          StartCoroutine(Instablock());
       }
       else {
-         switch (Rnd.Range(0, 2)) {
+         switch (Rnd.Range(0, 10)) {
             case 0:
             case 1:
                NodeMazeGeneration();
@@ -1014,6 +1012,11 @@ public class BackdoorHacking : MonoBehaviour {
    #endregion
 
    void CameraSwitcher (int x) {
+      //Makes it so it does not spam editor. This should not be ingame.
+      if (Application.isEditor) {
+         Main.GetComponent<AudioListener>().enabled = false;
+      }
+
       for (int i = 0; i < MiniCams.Length; i++) {
          MiniCams[i].gameObject.SetActive(false);
       }
