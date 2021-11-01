@@ -12,8 +12,6 @@ using UnityEngine.Video;
  * I really should start using separate scripts. 
  */
 
-//
-
 public class BackdoorHacking : MonoBehaviour {
 
    public KMBombInfo Bomb;
@@ -175,24 +173,24 @@ public class BackdoorHacking : MonoBehaviour {
 
    #region Buttons
 
-   void Buy (KMSelectable Button) {
-      Button.AddInteractionPunch();
-      Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Button.transform);
-      if (Button == BuyButtons[0]) {
+   void Buy (KMSelectable OtherButton) {
+      OtherButton.AddInteractionPunch();
+      Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, OtherButton.transform);
+      if (OtherButton == BuyButtons[0]) {
          if (DOSCoinAmount >= 100 && !Multiplier) {
             Multiplier = true;
             DOSCoinAmount -= 100;
             Debug.LogFormat("[Backdoor Hacking #{0}] You bought the multiplier boost!", ModuleId);
          }
       }
-      if (Button == BuyButtons[1]) {
+      if (OtherButton == BuyButtons[1]) {
          if (DOSCoinAmount >= 75 && !DecreaseCooldown) {
             DecreaseCooldown = true;
             DOSCoinAmount -= 75;
             Debug.LogFormat("[Backdoor Hacking #{0}] You bought the decrease cooldown boost!", ModuleId);
          }
       }
-      if (Button == BuyButtons[2]) {
+      if (OtherButton == BuyButtons[2]) {
          if (DOSCoinAmount >= DOSCointGoal) {
             GetComponent<KMBombModule>().HandlePass();
             DOSCoinAmount -= DOSCointGoal;
@@ -425,7 +423,7 @@ public class BackdoorHacking : MonoBehaviour {
       ResetMemoryInfo();
       ResetNodeInfo();
       StackReset();
-
+      
       Waiting = false;
       BeingHacked = false;
       CurrentState = HackState.Idle;
