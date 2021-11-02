@@ -167,7 +167,7 @@ public class BackdoorHacking : MonoBehaviour {
       DOSCoinAmount = 0;
       BeingHacked = false;
       DOSCointGoal = 30 + Bomb.GetSolvableModuleNames().Count() * 15;
-      Debug.LogFormat("[Backdoor Hacking #{0}] Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz. Version number is 1.0.", ModuleId);
+      Debug.LogFormat("[Backdoor Hacking #{0}] Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz. Version number is 1.1.1.", ModuleId);
       StartCoroutine(Timer());
    }
 
@@ -423,7 +423,8 @@ public class BackdoorHacking : MonoBehaviour {
       ResetMemoryInfo();
       ResetNodeInfo();
       StackReset();
-      
+
+      Cursor.visible = true;
       Waiting = false;
       BeingHacked = false;
       CurrentState = HackState.Idle;
@@ -437,6 +438,7 @@ public class BackdoorHacking : MonoBehaviour {
 
    IEnumerator IBeViewingTheseBitches () {
       if (!BeingHacked) {
+         Cursor.visible = false;
          BeingHacked = true;
          CurrentState = HackState.GettingHacked;
          Debug.LogFormat("[Backdoor Hacking #{0}] Hack occured at {1}.", ModuleId, (int) (Bomb.GetTime() / 60) + ":" + ((int) Bomb.GetTime() % 60).ToString("00"));

@@ -19,6 +19,6 @@ MonoBehaviour:
     small assistance with videos.\n\nBased off Welcome to the Game II. Also Happy
     Halloween everyone!\n\nManual can be found at ktane.timwi.de or in the manuals
     folder of your game.\n\nIf there are any bugs, contact Fartlicker777#9169 on Discord."
-  version: 
+  version: 1.1.2
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 05531da2c83ab654b9d070269e308dfb, type: 3}
