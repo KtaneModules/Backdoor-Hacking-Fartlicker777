@@ -349,22 +349,44 @@ public class BackdoorHacking : MonoBehaviour {
                      break;
                }
                break;
-            case 4:
+            case 3:
                switch (Rnd.Range(0, 3)) {
                   case 0:
-                     doubletemp = Rnd.Range(20f, 30f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(25f, 30f) * (Multiplier ? 1.1 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
                      break;
                   case 1:
-                     doubletemp = Rnd.Range(15f, 20f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(20f, 25f) * (Multiplier ? 1.1 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
                      break;
                   case 2:
-                     doubletemp = Rnd.Range(10f, 15f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(10f, 20f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp -= doubletemp % .001;
+                     HackResultText.text += "\n+" + doubletemp.ToString();
+                     DOSCoinAmount += doubletemp;
+                     break;
+               }
+               break;
+            case 4:
+               switch (Rnd.Range(0, 3)) {
+                  case 0:
+                     doubletemp = Rnd.Range(18f, 20f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp -= doubletemp % .001;
+                     HackResultText.text += "\n+" + doubletemp.ToString();
+                     DOSCoinAmount += doubletemp;
+                     break;
+                  case 1:
+                     doubletemp = Rnd.Range(16f, 18f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp -= doubletemp % .001;
+                     HackResultText.text += "\n+" + doubletemp.ToString();
+                     DOSCoinAmount += doubletemp;
+                     break;
+                  case 2:
+                     doubletemp = Rnd.Range(10f, 16f) * (Multiplier ? 1.1 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
@@ -785,7 +807,7 @@ public class BackdoorHacking : MonoBehaviour {
       Taken[PathFinder[0]] = true;
       int[] Directions = { -6, -5, -4, -1, 1, 4, 5, 6 };
 
-      for (int i = 1; i < (5 - ZoneCorrectClicks) * 2 - 1; i++) {
+      for (int i = 1; i < (5 - ZoneCorrectClicks) * 2; i++) {
          Directions.Shuffle();
          for (int j = 0; j < 8; j++) {
 
@@ -1389,22 +1411,21 @@ public class BackdoorHacking : MonoBehaviour {
          }
       }
    }
-
+   /*
    #region Twitch Plays
 
-   /* 
 #pragma warning disable 414
-   private readonly string TwitchHelpMessage = @"Use !{0} to do something.";
+   private readonly string TwitchHelpMessage = @"Use !{0} XXX### to time your input. Use # for space.";
 #pragma warning restore 414
 
    IEnumerator ProcessTwitchCommand (string Command) {
-      
+      Command = Command.Trim().ToUpper();
       yield return null;
    }
 
    IEnumerator TwitchHandleForcedSolve () {
       yield return null;
    }
-   */
-   #endregion
+   
+   #endregion*/
 }
