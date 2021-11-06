@@ -142,10 +142,11 @@ public class BackdoorHacking : MonoBehaviour {
         KeyCode.Z, KeyCode.X, KeyCode.C, KeyCode.V, KeyCode.B, KeyCode.N, KeyCode.M,
         KeyCode.Space, KeyCode.Alpha1, KeyCode.Keypad1, KeyCode.Alpha2, KeyCode.Keypad2, KeyCode.Alpha3, KeyCode.Keypad3,
         KeyCode.Alpha4, KeyCode.Keypad4, KeyCode.Alpha5, KeyCode.Keypad5, KeyCode.Alpha6, KeyCode.Keypad6, KeyCode.Alpha7, KeyCode.Keypad7,
-        KeyCode.Alpha8, KeyCode.Keypad8, KeyCode.Alpha9, KeyCode.Keypad9, KeyCode.Alpha0, KeyCode.Keypad0
+        KeyCode.Alpha8, KeyCode.Keypad8, KeyCode.Alpha9, KeyCode.Keypad9, KeyCode.Alpha0, KeyCode.Keypad0,
+        KeyCode.LeftArrow, KeyCode.UpArrow, KeyCode.RightArrow, KeyCode.DownArrow
   };
 
-   string TheLetters = "qwertyuiopasdfghjklzxcvbnm 11223344556677889900".ToUpper();
+   string TheLetters = "qwertyuiopasdfghjklzxcvbnm 11223344556677889900<^>/".ToUpper();
 
 
    void Awake () {
@@ -167,7 +168,7 @@ public class BackdoorHacking : MonoBehaviour {
       DOSCoinAmount = 0;
       BeingHacked = false;
       DOSCointGoal = 30 + Bomb.GetSolvableModuleNames().Count() * 15;
-      Debug.LogFormat("[Backdoor Hacking #{0}] Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz. Version number is 1.1.1.", ModuleId);
+      Debug.LogFormat("[Backdoor Hacking #{0}] Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz. Version number is 1.1.1.1.1.1", ModuleId);
       StartCoroutine(Timer());
    }
 
@@ -600,9 +601,9 @@ public class BackdoorHacking : MonoBehaviour {
             case 3:
             case 4:
             case 5:
-            case 6:
                StartCoroutine(MemoryFraggerDisplay());
                break;
+            case 6:
             case 7:
             case 8:
             case 9:
@@ -1207,28 +1208,28 @@ public class BackdoorHacking : MonoBehaviour {
          }
       }
       else if (CurrentState == HackState.StackPusher) {
-         if (Input.GetKeyDown(KeyCode.W) && ActualSelection > 4) { //All this wacky shit was an attempt to fix a bug. I will not revert this out of laziness.
+         if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && ActualSelection > 4) { //All this wacky shit was an attempt to fix a bug. I will not revert this out of laziness.
             ActualSelection -= 5;
             StackGrid[ActualSelection + 5]--;
             StackNodes[ActualSelection + 5].sprite = StackPictures[(int) StackGrid[ActualSelection + 5]];
             StackGrid[ActualSelection]++;
             StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
          }
-         else if (Input.GetKeyDown(KeyCode.A) && ActualSelection % 5 != 0) {
+         else if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && ActualSelection % 5 != 0) {
             ActualSelection--;
             StackGrid[ActualSelection + 1]--;
             StackNodes[ActualSelection + 1].sprite = StackPictures[(int) StackGrid[ActualSelection + 1]];
             StackGrid[ActualSelection]++;
             StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
          }
-         else if (Input.GetKeyDown(KeyCode.S) && ActualSelection < 20) {
+         else if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && ActualSelection < 20) {
             ActualSelection += 5;
             StackGrid[ActualSelection - 5]--;
             StackNodes[ActualSelection - 5].sprite = StackPictures[(int) StackGrid[ActualSelection - 5]];
             StackGrid[ActualSelection]++;
             StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
          }
-         else if (Input.GetKeyDown(KeyCode.D) && ActualSelection % 5 != 4) {
+         else if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && ActualSelection % 5 != 4) {
             ActualSelection++;
             StackGrid[ActualSelection - 1]--;
             StackNodes[ActualSelection - 1].sprite = StackPictures[(int) StackGrid[ActualSelection - 1]];
