@@ -168,7 +168,7 @@ public class BackdoorHacking : MonoBehaviour {
       DOSCoinAmount = 0;
       BeingHacked = false;
       DOSCointGoal = 30 + Bomb.GetSolvableModuleNames().Count() * 15;
-      Debug.LogFormat("[Backdoor Hacking #{0}] Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz. Version number is 1.1.1.1.1.1", ModuleId);
+      Debug.LogFormat("[Backdoor Hacking #{0}] Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz. Version number is 1.1.1.1.1.1.1", ModuleId);
       StartCoroutine(Timer());
    }
 
@@ -287,19 +287,19 @@ public class BackdoorHacking : MonoBehaviour {
             case 0:
                switch (Rnd.Range(0, 3)) {
                   case 0:
-                     doubletemp = Rnd.Range(70f, 110f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(70f, 110f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
                      break;
                   case 1:
-                     doubletemp = Rnd.Range(60f, 70f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(60f, 70f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
                      break;
                   case 2:
-                     doubletemp = Rnd.Range(55f, 60f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(55f, 60f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
@@ -309,19 +309,19 @@ public class BackdoorHacking : MonoBehaviour {
             case 1:
                switch (Rnd.Range(0, 3)) {
                   case 0:
-                     doubletemp = Rnd.Range(70f, 90f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(70f, 90f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
                      break;
                   case 1:
-                     doubletemp = Rnd.Range(50f, 70f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(50f, 70f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
                      break;
                   case 2:
-                     doubletemp = Rnd.Range(45f, 50f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(45f, 50f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
@@ -331,19 +331,19 @@ public class BackdoorHacking : MonoBehaviour {
             case 2:
                switch (Rnd.Range(0, 3)) {
                   case 0:
-                     doubletemp = Rnd.Range(40f, 50f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(40f, 50f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
                      break;
                   case 1:
-                     doubletemp = Rnd.Range(30f, 40f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(30f, 40f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
                      break;
                   case 2:
-                     doubletemp = Rnd.Range(20f, 30f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(20f, 30f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp += doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
@@ -353,19 +353,19 @@ public class BackdoorHacking : MonoBehaviour {
             case 3:
                switch (Rnd.Range(0, 3)) {
                   case 0:
-                     doubletemp = Rnd.Range(25f, 30f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(25f, 30f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
                      break;
                   case 1:
-                     doubletemp = Rnd.Range(20f, 25f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(20f, 25f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
                      break;
                   case 2:
-                     doubletemp = Rnd.Range(10f, 20f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(10f, 20f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
@@ -375,19 +375,19 @@ public class BackdoorHacking : MonoBehaviour {
             case 4:
                switch (Rnd.Range(0, 3)) {
                   case 0:
-                     doubletemp = Rnd.Range(18f, 20f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(18f, 20f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
                      break;
                   case 1:
-                     doubletemp = Rnd.Range(16f, 18f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(16f, 18f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
                      break;
                   case 2:
-                     doubletemp = Rnd.Range(10f, 16f) * (Multiplier ? 1.1 : 1.0);
+                     doubletemp = Rnd.Range(10f, 16f) * (Multiplier ? 1.25 : 1.0);
                      doubletemp -= doubletemp % .001;
                      HackResultText.text += "\n+" + doubletemp.ToString();
                      DOSCoinAmount += doubletemp;
