@@ -16,6 +16,9 @@ public class BackdoorHacking : MonoBehaviour {
 
    public KMBombInfo Bomb;
    public KMAudio Audio;
+   public AudioSource StaticAudio;
+
+   public AudioClip[] Clips;
 
    public Camera Main;
    public Camera[] MiniCams;
@@ -168,7 +171,7 @@ public class BackdoorHacking : MonoBehaviour {
       DOSCoinAmount = 0;
       BeingHacked = false;
       DOSCointGoal = 30 + Bomb.GetSolvableModuleNames().Count() * 15;
-      Debug.LogFormat("[Backdoor Hacking #{0}] Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz. Version number is 1.1.1.1.1.1.1", ModuleId);
+      Debug.LogFormat("[Backdoor Hacking #{0}] Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz. Version number is 1.1.1.1.1.1.1.1", ModuleId);
       StartCoroutine(Timer());
    }
 
@@ -271,7 +274,8 @@ public class BackdoorHacking : MonoBehaviour {
    IEnumerator HackResult () {
       CameraSwitcher(3);
       CurrentState = HackState.GettingHacked;
-      Audio.PlaySoundAtTransform("ResultsSound", Cube[3].transform);
+      StaticAudio.clip = Clips[2];
+      StaticAudio.Play();
       HackResultText.text = BlockedHack ? "Hack Blocked" : "Hacked";
       Debug.LogFormat(BlockedHack ? "[Backdoor Hacking #{0}] You blocked the hack." : "[Backdoor Hacking #{0}] You failed the hack.", ModuleId);
       double doubletemp = 0;
@@ -415,7 +419,8 @@ public class BackdoorHacking : MonoBehaviour {
    IEnumerator Instablock () {
       CameraSwitcher(3);
       CurrentState = HackState.GettingHacked;
-      Audio.PlaySoundAtTransform("ResultsSound", MiniCams[3].transform);
+      StaticAudio.clip = Clips[2];
+      StaticAudio.Play();
       HackResultText.text = "Instablocked";
       double doubletemp = 0;
 
@@ -473,7 +478,8 @@ public class BackdoorHacking : MonoBehaviour {
             ZoneText[i].text = "";
             ZoneWallCorrectSpots[i] = Rnd.Range(0, 28);
          }
-         Audio.PlaySoundAtTransform("GettingGotAudio", Cube[0].transform);
+         StaticAudio.clip = Clips[1];
+         StaticAudio.Play();
          Background.Play();
          yield return new WaitForSeconds(11.3f);
          Background.Stop();
@@ -492,7 +498,8 @@ public class BackdoorHacking : MonoBehaviour {
       StartCoroutine(ZoneWallTextGenerate(0));
       StartCoroutine(ZoneWallTextGenerate(1));
       yield return new WaitForSeconds(.2f);
-      Audio.PlaySoundAtTransform("Countdown", MiniCams[1].transform);
+      StaticAudio.clip = Clips[0];
+      StaticAudio.Play();
       StartCoroutine(ZoneWallTextGenerate(2));
       yield return new WaitForSeconds(.2f);
       StartCoroutine(ZoneWallTextGenerate(3));
@@ -569,7 +576,8 @@ public class BackdoorHacking : MonoBehaviour {
             if (ZoneClicks == i) {
                break;
             }
-            Audio.PlaySoundAtTransform("RightBump", MiniCams[1].transform);
+            StaticAudio.clip = Clips[18];
+            StaticAudio.Play();
             for (int j = ZoneText[i].text.Length - 2; j > 0; j--) {
                if (ZoneClicks == i) {
                   break;
@@ -582,7 +590,8 @@ public class BackdoorHacking : MonoBehaviour {
                   yield return new WaitForSecondsRealtime(.015f);
                }
             }
-            Audio.PlaySoundAtTransform("LeftBump", MiniCams[1].transform);
+            StaticAudio.clip = Clips[17];
+            StaticAudio.Play();
          }
       }
       //Debug.Log(ZoneCorrectClicks);
@@ -699,11 +708,13 @@ public class BackdoorHacking : MonoBehaviour {
             }
             break;
       }
-      Audio.PlaySoundAtTransform("Countdown", MiniCams[2].transform);
+      StaticAudio.clip = Clips[0];
+      StaticAudio.Play();
       yield return new WaitForSeconds(5.562f);
       for (int i = 0; i < Goal.Length; i++) {
          MainNodeText.text = Goal[i].ToString();
-         Audio.PlaySoundAtTransform("MemoryDisplayBeep", MiniCams[2].transform);
+         StaticAudio.clip = Clips[3];
+         StaticAudio.Play();
          yield return new WaitForSeconds(1f);
       }
       MainNodeText.text = "";
@@ -921,7 +932,8 @@ public class BackdoorHacking : MonoBehaviour {
             Centers[i * 5 + j].SetActive(true);
             AlsoCenterGodDamnIt[i * 5 + j].SetActive(true);
          }
-         Audio.PlaySoundAtTransform("NodeHackerSetup", MiniCams[4].transform);
+         StaticAudio.clip = Clips[9];
+         StaticAudio.Play();
          yield return new WaitForSecondsRealtime(.2f);
       }
       for (int i = 0; i < 5 - ZoneCorrectClicks; i++) {
@@ -937,7 +949,8 @@ public class BackdoorHacking : MonoBehaviour {
       yield return new WaitForSeconds(.1f);
       for (int j = 1; j < Path.Count(); j++) {
          Centers[Path[j]].GetComponent<MeshRenderer>().material = NodeHackerColors[1];
-         Audio.PlaySoundAtTransform("CheckNoise", MiniCams[4].transform);
+         StaticAudio.clip = Clips[6];
+         StaticAudio.Play();
          yield return new WaitForSeconds(.1f);
          if (OorD[Path[j - 1]] == OorD[Path[j]]) {
             /*Debug.Log(OorD[Path[j - 1]]);
@@ -1068,10 +1081,12 @@ public class BackdoorHacking : MonoBehaviour {
          if (Input.GetKeyDown(KeyCode.Space)) {
             if (ZoneText[ZoneClicks + 1].text.IndexOf("<color=red>|</color>") != -1) {
                ZoneCorrectClicks++;
-               Audio.PlaySoundAtTransform("Good", MiniCams[1].transform);
+               StaticAudio.clip = Clips[16];
+               StaticAudio.Play();
             }
             else {
-               Audio.PlaySoundAtTransform("Bad", MiniCams[1].transform);
+               StaticAudio.clip = Clips[15];
+               StaticAudio.Play();
             }
             ZoneClicks++;
          }
@@ -1080,10 +1095,12 @@ public class BackdoorHacking : MonoBehaviour {
          for (int i = 0; i < TheKeys.Count(); i++) {
             if (Input.GetKeyDown(TheKeys[i])) {
                if (MemoryInput.Length != Goal.Length) {
-                  Audio.PlaySoundAtTransform("MemorySelectionBeep", MiniCams[2].transform);
+                  StaticAudio.clip = Clips[4];
+                  StaticAudio.Play();
                }
                else {
-                  Audio.PlaySoundAtTransform("MemorySelectionBeepFinal", MiniCams[3].transform);
+                  StaticAudio.clip = Clips[5];
+                  StaticAudio.Play();
                }
                string temp = "";
                for (int k = 0; k < 8; k++) {
@@ -1203,7 +1220,8 @@ public class BackdoorHacking : MonoBehaviour {
                if (PathFinder.Contains(Path[Path.Count() - 2])) {
                   WasHighlighted = true;
                }
-               Audio.PlaySoundAtTransform(WasHighlighted ? "ExitedHighlight" : "Moved", MiniCams[4].transform);
+               StaticAudio.clip = Clips[WasHighlighted ? 7 : 8];
+               StaticAudio.Play();
             }
          }
       }
@@ -1242,7 +1260,8 @@ public class BackdoorHacking : MonoBehaviour {
                   StartCoroutine(HackResult());
                }
                else {
-                  Audio.PlaySoundAtTransform("MovePickUp", Cube[5].transform);
+                  StaticAudio.clip = Clips[11];
+                  StaticAudio.Play();
                   HeldItem = HeldItem == TypesOfItems.Move ? TypesOfItems.Empty : TypesOfItems.Move;
                   if (HeldItem == TypesOfItems.Move) {
                      IndexOfHeldStack = ActualSelection;
@@ -1306,7 +1325,8 @@ public class BackdoorHacking : MonoBehaviour {
                   StartCoroutine(HackResult());
                }
                else {
-                  Audio.PlaySoundAtTransform("StackPickUp", Cube[5].transform);
+                  StaticAudio.clip = Clips[13];
+                  StaticAudio.Play();
                   HeldItem = TypesOfItems.Stack;
                   IndexOfHeldStack = ActualSelection;
                }
@@ -1369,7 +1389,8 @@ public class BackdoorHacking : MonoBehaviour {
                      StartCoroutine(HackResult());
                   }
                   else {
-                     Audio.PlaySoundAtTransform("StackPlace", Cube[5].transform);
+                     StaticAudio.clip = Clips[14];
+                     StaticAudio.Play();
                      StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
                      StackNodes[ActualSelection].sprite = StackPictures[7];
                      StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;
@@ -1381,7 +1402,8 @@ public class BackdoorHacking : MonoBehaviour {
 
                }
                else if (HeldItem == TypesOfItems.Move) {
-                  Audio.PlaySoundAtTransform("MovePlace", Cube[5].transform);
+                  StaticAudio.clip = Clips[12];
+                  StaticAudio.Play();
                   StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
                   StackNodes[ActualSelection].sprite = StackPictures[5];
                   StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;
@@ -1395,7 +1417,8 @@ public class BackdoorHacking : MonoBehaviour {
                   StartCoroutine(HackResult());
                }
                else {
-                  Audio.PlaySoundAtTransform("Goal", Cube[5].transform);
+                  StaticAudio.clip = Clips[10];
+                  StaticAudio.Play();
                   HeldItem = TypesOfItems.Empty;
                   StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
                   StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;

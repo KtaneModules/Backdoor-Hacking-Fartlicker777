@@ -1234,6 +1234,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1179928865732414
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4060706035751974}
+  - component: {fileID: 82292217011141842}
+  m_Layer: 0
+  m_Name: Audio Source
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1180545500532712
 GameObject:
   m_ObjectHideFlags: 1
@@ -4893,6 +4909,19 @@ Transform:
   m_Father: {fileID: 4793337138750438}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 22.5, y: 90, z: 90}
+--- !u!4 &4060706035751974
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1179928865732414}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -207, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4257340207950476}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4067609965693256
 Transform:
   m_ObjectHideFlags: 1
@@ -5471,6 +5500,7 @@ Transform:
   - {fileID: 4190554023293324}
   - {fileID: 4581154043544508}
   - {fileID: 4002846645745404}
+  - {fileID: 4060706035751974}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -16789,6 +16819,86 @@ AudioListener:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1490662584697080}
   m_Enabled: 1
+--- !u!82 &82292217011141842
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1179928865732414}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!95 &95018439639042412
 Animator:
   serializedVersion: 3
@@ -20574,6 +20684,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Bomb: {fileID: 114454383462897410}
   Audio: {fileID: 114915473299363512}
+  StaticAudio: {fileID: 82292217011141842}
+  Clips:
+  - {fileID: 8300000, guid: c05424c90ff4ef64bb178f7a62a03a8d, type: 3}
+  - {fileID: 8300000, guid: 0e15a1552d6601f4d94c8172b3bb6efc, type: 3}
+  - {fileID: 8300000, guid: 3042c9576c309374fb7dcab2804e6a14, type: 3}
+  - {fileID: 8300000, guid: bdeae44ea2b05804a982ad68bf3cdcc5, type: 3}
+  - {fileID: 8300000, guid: 992f69745dae69b469476f65607bab4c, type: 3}
+  - {fileID: 8300000, guid: d2e58f08161fe3a468097791352e94f6, type: 3}
+  - {fileID: 8300000, guid: ced01217c968b0240bbb495dfc23c694, type: 3}
+  - {fileID: 8300000, guid: c18a2019aed113e4e8380cb1f0f7b0d2, type: 3}
+  - {fileID: 8300000, guid: 53d1ce4e79ea5a541bcabf041c1f59e0, type: 3}
+  - {fileID: 8300000, guid: 3eaa618a5a12d84448067fa62e41b096, type: 3}
+  - {fileID: 8300000, guid: 51fea39e5cda9324da7fc20a9324f95a, type: 3}
+  - {fileID: 8300000, guid: 55eb1fb37a08a5b4ea9b3120885792d5, type: 3}
+  - {fileID: 8300000, guid: d5e2565fb3878f440aa54d9b6ec93817, type: 3}
+  - {fileID: 8300000, guid: 87d5bea687d63db46819a63dabfcdaae, type: 3}
+  - {fileID: 8300000, guid: acf62f200aa9008489c15c6e98bb6d7e, type: 3}
+  - {fileID: 8300000, guid: 83f0fe33b4012c64493784aab77c5ab8, type: 3}
+  - {fileID: 8300000, guid: 5827fd458ed38d24cb3c82bc377f53ce, type: 3}
+  - {fileID: 8300000, guid: cc30a3e8592b8c441bf3e33159782833, type: 3}
+  - {fileID: 8300000, guid: 54188bd88701b02479584f91445c2a5a, type: 3}
   Main: {fileID: 0}
   MiniCams:
   - {fileID: 20872753345666020}
