@@ -61,7 +61,7 @@ public class BackdoorHacking : MonoBehaviour {
    static int DOSCointGoal;
    bool Multiplier;
    bool DecreaseCooldown;
-   bool Connected;
+   //bool Connected;
    bool Waiting;
 
    //Zonewall Shit
@@ -150,7 +150,7 @@ public class BackdoorHacking : MonoBehaviour {
   };
 
    string TheLetters = "qwertyuiopasdfghjklzxcvbnm 11223344556677889900<^>/".ToUpper();
-
+   bool FactoryActive;
 
    void Awake () {
       ModuleId = ModuleIdCounter++;
@@ -160,7 +160,18 @@ public class BackdoorHacking : MonoBehaviour {
       }
 
       Button.OnInteract += delegate () { ButtonPress(); return false; };
+
+      GetComponent<KMBombModule>().OnActivate += Activate;
+      GetComponent<KMBombInfo>().OnBombExploded += Exploded;
    }//-139.157 -139.725
+
+   void Exploded () {
+      Cursor.visible = true;
+   }
+
+   void Activate () {
+      StartCoroutine(Timer());
+   }
 
    void Start () { //transform.lossyScale
       Debug.Log(TheWholeAssModMinusTheMod[0].transform.lossyScale);
@@ -171,8 +182,7 @@ public class BackdoorHacking : MonoBehaviour {
       DOSCoinAmount = 0;
       BeingHacked = false;
       DOSCointGoal = 30 + Bomb.GetSolvableModuleNames().Count() * 15;
-      Debug.LogFormat("[Backdoor Hacking #{0}] Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz. Version number is 1.1.1.1.1.1.1.1", ModuleId);
-      StartCoroutine(Timer());
+      Debug.LogFormat("[Backdoor Hacking #{0}] Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz. Version number is 1.1.1.1.1.1.1.1.1", ModuleId);
    }
 
    #region Buttons
@@ -180,6 +190,9 @@ public class BackdoorHacking : MonoBehaviour {
    void Buy (KMSelectable OtherButton) {
       OtherButton.AddInteractionPunch();
       Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, OtherButton.transform);
+      if (BeingHacked) {
+         return;
+      }
       if (OtherButton == BuyButtons[0]) {
          if (DOSCoinAmount >= 100 && !Multiplier) {
             Multiplier = true;
@@ -188,10 +201,12 @@ public class BackdoorHacking : MonoBehaviour {
          }
       }
       if (OtherButton == BuyButtons[1]) {
-         if (DOSCoinAmount >= 75 && !DecreaseCooldown) {
+         if (DOSCoinAmount >= 50 && !DecreaseCooldown) {
             DecreaseCooldown = true;
-            DOSCoinAmount -= 75;
-            Debug.LogFormat("[Backdoor Hacking #{0}] You bought the decrease cooldown boost!", ModuleId);
+            DOSCoinAmount -= 50;
+            StopAllCoroutines();
+            StartCoroutine(BuyTimer());
+            Debug.LogFormat("[Backdoor Hacking #{0}] You bought the three-minute cooldown boost!", ModuleId);
          }
       }
       if (OtherButton == BuyButtons[2]) {
@@ -216,8 +231,16 @@ public class BackdoorHacking : MonoBehaviour {
          CallHack();
       }
       else {
-         if (!Connected) {
-            if (Rnd.Range(0, 5) == 0) {
+
+         if (Rnd.Range(0, 3) == 0) {
+            CallHack();
+         }
+         else {
+            StartCoroutine(Wait());
+         }
+
+         /*if (!Connected) {
+            if (Rnd.Range(0, 3) == 0) {
                CallHack();
             }
             else {
@@ -226,20 +249,25 @@ public class BackdoorHacking : MonoBehaviour {
          }
          else {
             StartCoroutine(Wait());
-         }
-         Connected ^= true;
+         }*/
+         /*Connected ^= true;
          if (Connected) {
             ConnectionText.text = "Disconnect";
          }
          else {
             ConnectionText.text = "Connect";
-         }
+         }*/
       }
    }
 
    #endregion
 
    #region General Animations
+
+   IEnumerator BuyTimer () {
+      yield return new WaitForSeconds(180);
+      CallHack();
+   }
 
    IEnumerator Timer () {
       int time = Rnd.Range(60, 151);
@@ -256,18 +284,10 @@ public class BackdoorHacking : MonoBehaviour {
    IEnumerator Wait () {
       Waiting = true;
       Bar.GetComponent<MeshRenderer>().material = BarColors[0];
-      if (DecreaseCooldown) {
-         yield return new WaitForSeconds(2.5f);
-         Bar.GetComponent<MeshRenderer>().material = BarColors[1];
-         yield return new WaitForSeconds(2.5f);
-         Bar.GetComponent<MeshRenderer>().material = BarColors[2];
-      }
-      else {
-         yield return new WaitForSeconds(5f);
-         Bar.GetComponent<MeshRenderer>().material = BarColors[1];
-         yield return new WaitForSeconds(5f);
-         Bar.GetComponent<MeshRenderer>().material = BarColors[2];
-      }
+      yield return new WaitForSeconds(8f);
+      Bar.GetComponent<MeshRenderer>().material = BarColors[1];
+      yield return new WaitForSeconds(8f);
+      Bar.GetComponent<MeshRenderer>().material = BarColors[2];
       Waiting = false;
    }
 
