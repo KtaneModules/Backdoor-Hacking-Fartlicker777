@@ -1094,382 +1094,490 @@ public class BackdoorHacking : MonoBehaviour {
          }
       }
       if (CurrentState == HackState.Idle || CurrentState == HackState.GettingHacked) {
-         CurrentVBucks.text = DOSCoinAmount.ToString("000.000");
+         if (DOSCoinAmount >= 100)
+            CurrentVBucks.text = DOSCoinAmount.ToString("000.000");
+         else
+            CurrentVBucks.text = DOSCoinAmount.ToString("00.000");
          return;
       }
       else if (CurrentState == HackState.ZoneWall) {
          if (Input.GetKeyDown(KeyCode.Space)) {
-            if (ZoneText[ZoneClicks + 1].text.IndexOf("<color=red>|</color>") != -1) {
-               ZoneCorrectClicks++;
-               StaticAudio.clip = Clips[16];
-               StaticAudio.Play();
-            }
-            else {
-               StaticAudio.clip = Clips[15];
-               StaticAudio.Play();
-            }
-            ZoneClicks++;
+            ZoneWallPress();
          }
       }
       else if (CurrentState == HackState.MemoryFragger) {
          for (int i = 0; i < TheKeys.Count(); i++) {
             if (Input.GetKeyDown(TheKeys[i])) {
-               if (MemoryInput.Length != Goal.Length) {
-                  StaticAudio.clip = Clips[4];
-                  StaticAudio.Play();
-               }
-               else {
-                  StaticAudio.clip = Clips[5];
-                  StaticAudio.Play();
-               }
-               string temp = "";
-               for (int k = 0; k < 8; k++) {
-                  temp += MiniNodeTexts[k].text.ToString();
-               }
-               if (!temp.Contains(TheLetters[i].ToString().ToUpper())) {
-                  return;
-               }
-               MemoryInput += TheLetters[i].ToString();
-               for (int j = 0; j < 8; j++) {
-                  if (MiniNodeTexts[j].text == MemoryInput[MemoryInput.Length - 1].ToString()) {
-                     InnerNodes[j].GetComponent<MeshRenderer>().material = ColorsForMemory[1];
-                  }
-               }
-               if (MemoryInput[MemoryInput.Length - 1] != Goal[MemoryInput.Length - 1]) {
-                  StartCoroutine(HackResult());
-               }
-               if (Goal.Length == MemoryInput.Length) {
-                  BlockedHack = true;
-                  StartCoroutine(HackResult());
-               }
+               MemoryFraggerPress(i);
             }
          }
       }
       else if (CurrentState == HackState.NodeHacker) {
          for (int i = 0; i < TheKeys.Count(); i++) {
             if (Input.GetKeyDown(TheKeys[i])) {
-               switch (TheLetters[i].ToString()) {
-                  case "Q":
-                     if (CurrentNode > 4 && CurrentNode % 5 != 0) {
-                        if (!Visited[CurrentNode - 6]) {
-                           CurrentNode -= 6;
-                           Path.Add(CurrentNode);
-                           Visited[CurrentNode] = true;
-                           Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
-                        }
-                     }
-                     break;
-                  case "A":
-                     if (CurrentNode > 4) {
-                        if (!Visited[CurrentNode - 5]) {
-                           CurrentNode -= 5;
-                           Visited[CurrentNode] = true;
-                           Path.Add(CurrentNode);
-                           Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
-                        }
-                     }
-                     break;
-                  case "Z":
-                     if (CurrentNode > 4 && CurrentNode % 5 != 4) {
-                        if (!Visited[CurrentNode - 4]) {
-                           CurrentNode -= 4;
-                           Visited[CurrentNode] = true;
-                           Path.Add(CurrentNode);
-                           Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
-                        }
-                     }
-                     break;
-
-                  case "W":
-                     if (CurrentNode % 5 != 0) {
-                        if (!Visited[CurrentNode - 1]) {
-                           CurrentNode -= 1;
-                           Path.Add(CurrentNode);
-                           Visited[CurrentNode] = true;
-                           Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
-                        }
-                     }
-                     break;
-                  case "S":
-                     CurrentState = HackState.GettingHacked;
-                     StartCoroutine(NodeCheck());
-                     return;
-                  case "X":
-                     if (CurrentNode % 5 != 4) {
-                        if (!Visited[CurrentNode + 1]) {
-                           CurrentNode += 1;
-                           Visited[CurrentNode] = true;
-                           Path.Add(CurrentNode);
-                           Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
-                        }
-                     }
-                     break;
-
-                  case "E":
-                     if (CurrentNode < 20 && CurrentNode % 5 != 0) {
-                        if (!Visited[CurrentNode + 4]) {
-                           CurrentNode += 4;
-                           Visited[CurrentNode] = true;
-                           Path.Add(CurrentNode);
-                           Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
-                        }
-                     }
-                     break;
-                  case "D":
-                     if (CurrentNode < 20) {
-                        if (!Visited[CurrentNode + 5]) {
-                           CurrentNode += 5;
-                           Visited[CurrentNode] = true;
-                           Path.Add(CurrentNode);
-                           Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
-                        }
-                     }
-                     break;
-                  case "C":
-                     if (CurrentNode < 20 && CurrentNode % 5 != 4) {
-                        if (!Visited[CurrentNode + 6]) {
-                           CurrentNode += 6;
-                           Visited[CurrentNode] = true;
-                           Path.Add(CurrentNode);
-                           Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
-                        }
-                     }
-                     break;
-               }
-               bool WasHighlighted = false;
-               if (PathFinder.Contains(Path[Path.Count() - 2])) {
-                  WasHighlighted = true;
-               }
-               StaticAudio.clip = Clips[WasHighlighted ? 7 : 8];
-               StaticAudio.Play();
+               NodeHackerPress(i);
             }
          }
       }
       else if (CurrentState == HackState.StackPusher) {
          if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && ActualSelection > 4) { //All this wacky shit was an attempt to fix a bug. I will not revert this out of laziness.
-            ActualSelection -= 5;
-            StackGrid[ActualSelection + 5]--;
-            StackNodes[ActualSelection + 5].sprite = StackPictures[(int) StackGrid[ActualSelection + 5]];
-            StackGrid[ActualSelection]++;
-            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
+            StackPusherUp();
          }
          else if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && ActualSelection % 5 != 0) {
-            ActualSelection--;
-            StackGrid[ActualSelection + 1]--;
-            StackNodes[ActualSelection + 1].sprite = StackPictures[(int) StackGrid[ActualSelection + 1]];
-            StackGrid[ActualSelection]++;
-            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
+            StackPusherLeft();
          }
          else if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && ActualSelection < 20) {
-            ActualSelection += 5;
-            StackGrid[ActualSelection - 5]--;
-            StackNodes[ActualSelection - 5].sprite = StackPictures[(int) StackGrid[ActualSelection - 5]];
-            StackGrid[ActualSelection]++;
-            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
+            StackPusherDown();
          }
          else if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && ActualSelection % 5 != 4) {
-            ActualSelection++;
-            StackGrid[ActualSelection - 1]--;
-            StackNodes[ActualSelection - 1].sprite = StackPictures[(int) StackGrid[ActualSelection - 1]];
-            StackGrid[ActualSelection]++;
-            StackNodes[ActualSelection].sprite = StackPictures[(int) StackGrid[ActualSelection]];
+            StackPusherRight();
          }
          else if (Input.GetKeyDown(KeyCode.Space)) {
-            if (StackGrid[ActualSelection] == StackNodeStates.YouH) {
-               if (HeldItem == TypesOfItems.Stack) {
-                  StartCoroutine(HackResult());
-               }
-               else {
-                  StaticAudio.clip = Clips[11];
-                  StaticAudio.Play();
-                  HeldItem = HeldItem == TypesOfItems.Move ? TypesOfItems.Empty : TypesOfItems.Move;
-                  if (HeldItem == TypesOfItems.Move) {
-                     IndexOfHeldStack = ActualSelection;
-                  }
-               }
-            }
-            else if (StackGrid[ActualSelection] == StackNodeStates.StackH) {
-
-               int YouPosition = 0;
-               bool CanPickUp = false;
-               for (int i = 0; i < 25; i++) {
-                  if (StackGrid[i] == StackNodeStates.YouH || StackGrid[i] == StackNodeStates.You) {
-                     YouPosition = i;
-                  }
-               }
-               if (ActualSelection == 0) {
-                  if (YouPosition == 1 || YouPosition == 5 || YouPosition == 6) {
-                     CanPickUp = true;
-                  }
-               }
-               else if (ActualSelection == 4) {
-                  if (YouPosition == 3 || YouPosition == 8 || YouPosition == 9) {
-                     CanPickUp = true;
-                  }
-               }
-               else if (ActualSelection == 20) {
-                  if (YouPosition == 15 || YouPosition == 16 || YouPosition == 21) {
-                     CanPickUp = true;
-                  }
-               }
-               else if (ActualSelection == 24) {
-                  if (YouPosition == 18 || YouPosition == 19 || YouPosition == 23) {
-                     CanPickUp = true;
-                  }
-               }
-               else if (ActualSelection > 19) {
-                  if (YouPosition == ActualSelection - 6 || YouPosition == ActualSelection - 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1) {
-                     CanPickUp = true;
-                  }
-               }
-               else if (ActualSelection < 5) {
-                  if (YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 6) {
-                     CanPickUp = true;
-                  }
-               }
-               else if (ActualSelection % 5 == 0) {
-                  if (YouPosition == ActualSelection - 5 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 6) {
-                     CanPickUp = true;
-                  }
-               }
-               else if (ActualSelection % 5 == 4) {
-                  if (YouPosition == ActualSelection - 5 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection - 6) {
-                     CanPickUp = true;
-                  }
-               }
-               else if (YouPosition == ActualSelection - 6 || YouPosition == ActualSelection - 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 6) {
-                  CanPickUp = true;
-               }
-
-               if (HeldItem != TypesOfItems.Empty || !CanPickUp) {
-                  StartCoroutine(HackResult());
-               }
-               else {
-                  StaticAudio.clip = Clips[13];
-                  StaticAudio.Play();
-                  HeldItem = TypesOfItems.Stack;
-                  IndexOfHeldStack = ActualSelection;
-               }
-            }
-            else if (StackGrid[ActualSelection] == StackNodeStates.EmptyH) {
-
-               if (HeldItem == TypesOfItems.Stack) {
-                  int YouPosition = 0;
-                  bool CanPlace = false;
-                  for (int i = 0; i < 25; i++) {
-                     if (StackGrid[i] == StackNodeStates.YouH || StackGrid[i] == StackNodeStates.You) {
-                        YouPosition = i;
-                     }
-                  }
-                  if (ActualSelection == 0) {
-                     if (YouPosition == 1 || YouPosition == 5 || YouPosition == 6) {
-                        CanPlace = true;
-                     }
-                  }
-                  else if (ActualSelection == 4) {
-                     if (YouPosition == 3 || YouPosition == 8 || YouPosition == 9) {
-                        CanPlace = true;
-                     }
-                  }
-                  else if (ActualSelection == 20) {
-                     if (YouPosition == 15 || YouPosition == 16 || YouPosition == 21) {
-                        CanPlace = true;
-                     }
-                  }
-                  else if (ActualSelection == 24) {
-                     if (YouPosition == 18 || YouPosition == 19 || YouPosition == 23) {
-                        CanPlace = true;
-                     }
-                  }
-                  else if (ActualSelection > 19) {
-                     if (YouPosition == ActualSelection - 6 || YouPosition == ActualSelection - 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1) {
-                        CanPlace = true;
-                     }
-                  }
-                  else if (ActualSelection < 5) {
-                     if (YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 6) {
-                        CanPlace = true;
-                     }
-                  }
-                  else if (ActualSelection % 5 == 0) {
-                     if (YouPosition == ActualSelection - 5 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 6) {
-                        CanPlace = true;
-                     }
-                  }
-                  else if (ActualSelection % 5 == 4) {
-                     if (YouPosition == ActualSelection - 5 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection - 6) {
-                        CanPlace = true;
-                     }
-                  }
-                  else if (YouPosition == ActualSelection - 6 || YouPosition == ActualSelection - 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 6) {
-                     CanPlace = true;
-                  }
-
-                  if (!CanPlace) {
-                     StartCoroutine(HackResult());
-                  }
-                  else {
-                     StaticAudio.clip = Clips[14];
-                     StaticAudio.Play();
-                     StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
-                     StackNodes[ActualSelection].sprite = StackPictures[7];
-                     StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;
-                     StackGrid[ActualSelection] = StackNodeStates.StackH;
-                     IndexOfHeldStack = -1;
-                     HeldItem = TypesOfItems.Empty;
-                  }
-
-
-               }
-               else if (HeldItem == TypesOfItems.Move) {
-                  StaticAudio.clip = Clips[12];
-                  StaticAudio.Play();
-                  StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
-                  StackNodes[ActualSelection].sprite = StackPictures[5];
-                  StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;
-                  StackGrid[ActualSelection] = StackNodeStates.YouH;
-                  IndexOfHeldStack = -1;
-                  HeldItem = TypesOfItems.Empty;
-               }
-            }
-            else if (StackGrid[ActualSelection] == StackNodeStates.GoalH) {
-               if (HeldItem != TypesOfItems.Stack) {
-                  StartCoroutine(HackResult());
-               }
-               else {
-                  StaticAudio.clip = Clips[10];
-                  StaticAudio.Play();
-                  HeldItem = TypesOfItems.Empty;
-                  StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
-                  StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;
-                  IndexOfHeldStack = -1;
-                  NodesDunked++;
-                  //Debug.Log(NodesDunked);
-                  //Debug.Log(ZoneCorrectClicks);
-                  if (NodesDunked == 5 - ZoneCorrectClicks) {
-                     BlockedHack = true;
-                     StartCoroutine(HackResult());
-                  }
-               }
-            }
+            StackPusherSpace();
          }
       }
    }
-   /*
-   #region Twitch Plays
 
-#pragma warning disable 414
-   private readonly string TwitchHelpMessage = @"Use !{0} XXX### to time your input. Use # for space.";
-#pragma warning restore 414
+    //Separate section for keyboard shit for TP
+    void ZoneWallPress()
+    {
+        if (ZoneText[ZoneClicks + 1].text.IndexOf("<color=red>|</color>") != -1)
+        {
+            ZoneCorrectClicks++;
+            StaticAudio.clip = Clips[16];
+            StaticAudio.Play();
+        }
+        else
+        {
+            StaticAudio.clip = Clips[15];
+            StaticAudio.Play();
+        }
+        ZoneClicks++;
+    }
 
-   IEnumerator ProcessTwitchCommand (string Command) {
-      Command = Command.Trim().ToUpper();
-      yield return null;
-   }
+    void MemoryFraggerPress(int key)
+    {
+        if (MemoryInput.Length != Goal.Length)
+        {
+            StaticAudio.clip = Clips[4];
+            StaticAudio.Play();
+        }
+        else
+        {
+            StaticAudio.clip = Clips[5];
+            StaticAudio.Play();
+        }
+        string temp = "";
+        for (int k = 0; k < 8; k++)
+        {
+            temp += MiniNodeTexts[k].text.ToString();
+        }
+        if (!temp.Contains(TheLetters[key].ToString().ToUpper()))
+        {
+            return;
+        }
+        MemoryInput += TheLetters[key].ToString();
+        for (int j = 0; j < 8; j++)
+        {
+            if (MiniNodeTexts[j].text == MemoryInput[MemoryInput.Length - 1].ToString())
+            {
+                InnerNodes[j].GetComponent<MeshRenderer>().material = ColorsForMemory[1];
+            }
+        }
+        if (MemoryInput[MemoryInput.Length - 1] != Goal[MemoryInput.Length - 1])
+        {
+            StartCoroutine(HackResult());
+        }
+        if (Goal.Length == MemoryInput.Length)
+        {
+            BlockedHack = true;
+            StartCoroutine(HackResult());
+        }
+    }
 
-   IEnumerator TwitchHandleForcedSolve () {
-      yield return null;
-   }
-   
-   #endregion*/
+    void NodeHackerPress(int key)
+    {
+        switch (TheLetters[key].ToString())
+        {
+            case "Q":
+                if (CurrentNode > 4 && CurrentNode % 5 != 0)
+                {
+                    if (!Visited[CurrentNode - 6])
+                    {
+                        CurrentNode -= 6;
+                        Path.Add(CurrentNode);
+                        Visited[CurrentNode] = true;
+                        Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
+                    }
+                }
+                break;
+            case "A":
+                if (CurrentNode > 4)
+                {
+                    if (!Visited[CurrentNode - 5])
+                    {
+                        CurrentNode -= 5;
+                        Visited[CurrentNode] = true;
+                        Path.Add(CurrentNode);
+                        Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
+                    }
+                }
+                break;
+            case "Z":
+                if (CurrentNode > 4 && CurrentNode % 5 != 4)
+                {
+                    if (!Visited[CurrentNode - 4])
+                    {
+                        CurrentNode -= 4;
+                        Visited[CurrentNode] = true;
+                        Path.Add(CurrentNode);
+                        Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
+                    }
+                }
+                break;
+
+            case "W":
+                if (CurrentNode % 5 != 0)
+                {
+                    if (!Visited[CurrentNode - 1])
+                    {
+                        CurrentNode -= 1;
+                        Path.Add(CurrentNode);
+                        Visited[CurrentNode] = true;
+                        Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
+                    }
+                }
+                break;
+            case "S":
+                CurrentState = HackState.GettingHacked;
+                StartCoroutine(NodeCheck());
+                return;
+            case "X":
+                if (CurrentNode % 5 != 4)
+                {
+                    if (!Visited[CurrentNode + 1])
+                    {
+                        CurrentNode += 1;
+                        Visited[CurrentNode] = true;
+                        Path.Add(CurrentNode);
+                        Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
+                    }
+                }
+                break;
+
+            case "E":
+                if (CurrentNode < 20 && CurrentNode % 5 != 0)
+                {
+                    if (!Visited[CurrentNode + 4])
+                    {
+                        CurrentNode += 4;
+                        Visited[CurrentNode] = true;
+                        Path.Add(CurrentNode);
+                        Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
+                    }
+                }
+                break;
+            case "D":
+                if (CurrentNode < 20)
+                {
+                    if (!Visited[CurrentNode + 5])
+                    {
+                        CurrentNode += 5;
+                        Visited[CurrentNode] = true;
+                        Path.Add(CurrentNode);
+                        Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
+                    }
+                }
+                break;
+            case "C":
+                if (CurrentNode < 20 && CurrentNode % 5 != 4)
+                {
+                    if (!Visited[CurrentNode + 6])
+                    {
+                        CurrentNode += 6;
+                        Visited[CurrentNode] = true;
+                        Path.Add(CurrentNode);
+                        Centers[CurrentNode].GetComponent<MeshRenderer>().material = NodeHackerColors[0];
+                    }
+                }
+                break;
+        }
+        bool WasHighlighted = false;
+        if (PathFinder.Contains(Path[Path.Count() - 2]))
+        {
+            WasHighlighted = true;
+        }
+        StaticAudio.clip = Clips[WasHighlighted ? 7 : 8];
+        StaticAudio.Play();
+    }
+
+    void StackPusherUp()
+    {
+        ActualSelection -= 5;
+        StackGrid[ActualSelection + 5]--;
+        StackNodes[ActualSelection + 5].sprite = StackPictures[(int)StackGrid[ActualSelection + 5]];
+        StackGrid[ActualSelection]++;
+        StackNodes[ActualSelection].sprite = StackPictures[(int)StackGrid[ActualSelection]];
+    }
+
+    void StackPusherLeft()
+    {
+        ActualSelection--;
+        StackGrid[ActualSelection + 1]--;
+        StackNodes[ActualSelection + 1].sprite = StackPictures[(int)StackGrid[ActualSelection + 1]];
+        StackGrid[ActualSelection]++;
+        StackNodes[ActualSelection].sprite = StackPictures[(int)StackGrid[ActualSelection]];
+    }
+
+    void StackPusherDown()
+    {
+        ActualSelection += 5;
+        StackGrid[ActualSelection - 5]--;
+        StackNodes[ActualSelection - 5].sprite = StackPictures[(int)StackGrid[ActualSelection - 5]];
+        StackGrid[ActualSelection]++;
+        StackNodes[ActualSelection].sprite = StackPictures[(int)StackGrid[ActualSelection]];
+    }
+
+    void StackPusherRight()
+    {
+        ActualSelection++;
+        StackGrid[ActualSelection - 1]--;
+        StackNodes[ActualSelection - 1].sprite = StackPictures[(int)StackGrid[ActualSelection - 1]];
+        StackGrid[ActualSelection]++;
+        StackNodes[ActualSelection].sprite = StackPictures[(int)StackGrid[ActualSelection]];
+    }
+
+    void StackPusherSpace()
+    {
+        if (StackGrid[ActualSelection] == StackNodeStates.YouH)
+        {
+            if (HeldItem == TypesOfItems.Stack)
+            {
+                StartCoroutine(HackResult());
+            }
+            else
+            {
+                StaticAudio.clip = Clips[11];
+                StaticAudio.Play();
+                HeldItem = HeldItem == TypesOfItems.Move ? TypesOfItems.Empty : TypesOfItems.Move;
+                if (HeldItem == TypesOfItems.Move)
+                {
+                    IndexOfHeldStack = ActualSelection;
+                }
+            }
+        }
+        else if (StackGrid[ActualSelection] == StackNodeStates.StackH)
+        {
+            int YouPosition = 0;
+            bool CanPickUp = false;
+            for (int i = 0; i < 25; i++)
+            {
+                if (StackGrid[i] == StackNodeStates.YouH || StackGrid[i] == StackNodeStates.You)
+                {
+                    YouPosition = i;
+                }
+            }
+            if (ActualSelection == 0)
+            {
+                if (YouPosition == 1 || YouPosition == 5 || YouPosition == 6)
+                {
+                    CanPickUp = true;
+                }
+            }
+            else if (ActualSelection == 4)
+            {
+                if (YouPosition == 3 || YouPosition == 8 || YouPosition == 9)
+                {
+                    CanPickUp = true;
+                }
+            }
+            else if (ActualSelection == 20)
+            {
+                if (YouPosition == 15 || YouPosition == 16 || YouPosition == 21)
+                {
+                    CanPickUp = true;
+                }
+            }
+            else if (ActualSelection == 24)
+            {
+                if (YouPosition == 18 || YouPosition == 19 || YouPosition == 23)
+                {
+                    CanPickUp = true;
+                }
+            }
+            else if (ActualSelection > 19)
+            {
+                if (YouPosition == ActualSelection - 6 || YouPosition == ActualSelection - 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1)
+                {
+                    CanPickUp = true;
+                }
+            }
+            else if (ActualSelection < 5)
+            {
+                if (YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 6)
+                {
+                    CanPickUp = true;
+                }
+            }
+            else if (ActualSelection % 5 == 0)
+            {
+                if (YouPosition == ActualSelection - 5 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 6)
+                {
+                    CanPickUp = true;
+                }
+            }
+            else if (ActualSelection % 5 == 4)
+            {
+                if (YouPosition == ActualSelection - 5 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection - 6)
+                {
+                    CanPickUp = true;
+                }
+            }
+            else if (YouPosition == ActualSelection - 6 || YouPosition == ActualSelection - 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 6)
+            {
+                CanPickUp = true;
+            }
+
+            if (HeldItem != TypesOfItems.Empty || !CanPickUp)
+            {
+                StartCoroutine(HackResult());
+            }
+            else
+            {
+                StaticAudio.clip = Clips[13];
+                StaticAudio.Play();
+                HeldItem = TypesOfItems.Stack;
+                IndexOfHeldStack = ActualSelection;
+            }
+        }
+        else if (StackGrid[ActualSelection] == StackNodeStates.EmptyH)
+        {
+
+            if (HeldItem == TypesOfItems.Stack)
+            {
+                int YouPosition = 0;
+                bool CanPlace = false;
+                for (int i = 0; i < 25; i++)
+                {
+                    if (StackGrid[i] == StackNodeStates.YouH || StackGrid[i] == StackNodeStates.You)
+                    {
+                        YouPosition = i;
+                    }
+                }
+                if (ActualSelection == 0)
+                {
+                    if (YouPosition == 1 || YouPosition == 5 || YouPosition == 6)
+                    {
+                        CanPlace = true;
+                    }
+                }
+                else if (ActualSelection == 4)
+                {
+                    if (YouPosition == 3 || YouPosition == 8 || YouPosition == 9)
+                    {
+                        CanPlace = true;
+                    }
+                }
+                else if (ActualSelection == 20)
+                {
+                    if (YouPosition == 15 || YouPosition == 16 || YouPosition == 21)
+                    {
+                        CanPlace = true;
+                    }
+                }
+                else if (ActualSelection == 24)
+                {
+                    if (YouPosition == 18 || YouPosition == 19 || YouPosition == 23)
+                    {
+                        CanPlace = true;
+                    }
+                }
+                else if (ActualSelection > 19)
+                {
+                    if (YouPosition == ActualSelection - 6 || YouPosition == ActualSelection - 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1)
+                    {
+                        CanPlace = true;
+                    }
+                }
+                else if (ActualSelection < 5)
+                {
+                    if (YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 6)
+                    {
+                        CanPlace = true;
+                    }
+                }
+                else if (ActualSelection % 5 == 0)
+                {
+                    if (YouPosition == ActualSelection - 5 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 6)
+                    {
+                        CanPlace = true;
+                    }
+                }
+                else if (ActualSelection % 5 == 4)
+                {
+                    if (YouPosition == ActualSelection - 5 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection - 6)
+                    {
+                        CanPlace = true;
+                    }
+                }
+                else if (YouPosition == ActualSelection - 6 || YouPosition == ActualSelection - 5 || YouPosition == ActualSelection - 4 || YouPosition == ActualSelection - 1 || YouPosition == ActualSelection + 1 || YouPosition == ActualSelection + 4 || YouPosition == ActualSelection + 5 || YouPosition == ActualSelection + 6)
+                {
+                    CanPlace = true;
+                }
+
+                if (!CanPlace)
+                {
+                    StartCoroutine(HackResult());
+                }
+                else
+                {
+                    StaticAudio.clip = Clips[14];
+                    StaticAudio.Play();
+                    StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
+                    StackNodes[ActualSelection].sprite = StackPictures[7];
+                    StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;
+                    StackGrid[ActualSelection] = StackNodeStates.StackH;
+                    IndexOfHeldStack = -1;
+                    HeldItem = TypesOfItems.Empty;
+                }
+
+
+            }
+            else if (HeldItem == TypesOfItems.Move)
+            {
+                StaticAudio.clip = Clips[12];
+                StaticAudio.Play();
+                StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
+                StackNodes[ActualSelection].sprite = StackPictures[5];
+                StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;
+                StackGrid[ActualSelection] = StackNodeStates.YouH;
+                IndexOfHeldStack = -1;
+                HeldItem = TypesOfItems.Empty;
+            }
+        }
+        else if (StackGrid[ActualSelection] == StackNodeStates.GoalH)
+        {
+            if (HeldItem != TypesOfItems.Stack)
+            {
+                StartCoroutine(HackResult());
+            }
+            else
+            {
+                StaticAudio.clip = Clips[10];
+                StaticAudio.Play();
+                HeldItem = TypesOfItems.Empty;
+                StackNodes[IndexOfHeldStack].sprite = StackPictures[0];
+                StackGrid[IndexOfHeldStack] = StackNodeStates.Empty;
+                IndexOfHeldStack = -1;
+                NodesDunked++;
+                //Debug.Log(NodesDunked);
+                //Debug.Log(ZoneCorrectClicks);
+                if (NodesDunked == 5 - ZoneCorrectClicks)
+                {
+                    BlockedHack = true;
+                    StartCoroutine(HackResult());
+                }
+            }
+        }
+    }
 }
