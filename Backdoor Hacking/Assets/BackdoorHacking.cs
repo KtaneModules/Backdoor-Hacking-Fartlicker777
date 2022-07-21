@@ -1094,10 +1094,7 @@ public class BackdoorHacking : MonoBehaviour {
          }
       }
       if (CurrentState == HackState.Idle || CurrentState == HackState.GettingHacked) {
-         if (DOSCoinAmount >= 100)
-            CurrentVBucks.text = DOSCoinAmount.ToString("000.000");
-         else
-            CurrentVBucks.text = DOSCoinAmount.ToString("00.000");
+         CurrentVBucks.text = DOSCoinAmount.ToString("000.000");
          return;
       }
       else if (CurrentState == HackState.ZoneWall) {
@@ -1141,6 +1138,7 @@ public class BackdoorHacking : MonoBehaviour {
     //Separate section for keyboard shit for TP
     void ZoneWallPress()
     {
+        if (ZoneClicks == 4) return;
         if (ZoneText[ZoneClicks + 1].text.IndexOf("<color=red>|</color>") != -1)
         {
             ZoneCorrectClicks++;
