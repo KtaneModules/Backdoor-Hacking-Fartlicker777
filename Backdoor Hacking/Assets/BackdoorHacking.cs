@@ -1301,7 +1301,7 @@ public class BackdoorHacking : MonoBehaviour {
                 break;
         }
         bool WasHighlighted = false;
-        if (PathFinder.Contains(Path[Path.Count() - 2]))
+        if (Path.Count() != 1 && PathFinder.Contains(Path[Path.Count() - 2]))
         {
             WasHighlighted = true;
         }
