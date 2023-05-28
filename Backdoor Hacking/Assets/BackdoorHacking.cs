@@ -162,10 +162,9 @@ public class BackdoorHacking : MonoBehaviour {
       Button.OnInteract += delegate () { ButtonPress(); return false; };
 
       GetComponent<KMBombModule>().OnActivate += Activate;
-      GetComponent<KMBombInfo>().OnBombExploded += Exploded;
    }//-139.157 -139.725
 
-   void Exploded () {
+   void OnDestroy () {
       Cursor.visible = true;
    }
 
@@ -222,7 +221,7 @@ public class BackdoorHacking : MonoBehaviour {
    void ButtonPress () {
       Button.AddInteractionPunch();
       Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Button.transform);
-      if (Waiting || BeingHacked) {
+      if (Waiting || BeingHacked || ModuleSolved) {
          return;
       }
       //StartCoroutine(HackResult());
