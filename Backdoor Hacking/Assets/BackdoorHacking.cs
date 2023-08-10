@@ -66,6 +66,7 @@ public class BackdoorHacking : MonoBehaviour {
 
    //Zonewall Shit
    bool AnkhaZone;
+   bool PressCooldown;
    public TextMesh[] ZoneText;
    int[] ZoneWallCorrectSpots = new int[5];
    int ZoneClicks = -1;
@@ -546,6 +547,7 @@ public class BackdoorHacking : MonoBehaviour {
    IEnumerator ZoneWallCursorIndex () {
       CurrentState = HackState.ZoneWall;
       for (int i = 0; i < 5; i++) {
+         PressCooldown = false;
          while (ZoneClicks != i) {
             for (int j = 1; j < ZoneText[i].text.Length - 1; j++) {
                if (ZoneText[i].text[j] == '.') {
@@ -1137,7 +1139,7 @@ public class BackdoorHacking : MonoBehaviour {
     //Separate section for keyboard shit for TP
     void ZoneWallPress()
     {
-        if (ZoneClicks == 4) return;
+        if (ZoneClicks == 4 || PressCooldown) return;
         if (ZoneText[ZoneClicks + 1].text.IndexOf("<color=red>|</color>") != -1)
         {
             ZoneCorrectClicks++;
@@ -1150,6 +1152,8 @@ public class BackdoorHacking : MonoBehaviour {
             StaticAudio.Play();
         }
         ZoneClicks++;
+        if (ZoneClicks != 4)
+            PressCooldown = true;
     }
 
     void MemoryFraggerPress(int key)
